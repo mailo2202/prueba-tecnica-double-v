@@ -1,0 +1,59 @@
+development:
+  clients:
+    default:
+      database: auditoria_db_development
+      hosts:
+        - localhost:27017
+      options:
+        connect_timeout: 10
+        socket_timeout: 5
+        server_selection_timeout: 5
+        max_pool_size: 5
+        min_pool_size: 1
+        max_idle_time: 30
+        read:
+          mode: :primary
+        write:
+          w: 1
+
+test:
+  clients:
+    default:
+      database: auditoria_db_test
+      hosts:
+        - localhost:27017
+      options:
+        connect_timeout: 10
+        socket_timeout: 5
+        server_selection_timeout: 5
+        max_pool_size: 5
+        min_pool_size: 1
+        max_idle_time: 30
+        read:
+          mode: :primary
+        write:
+          w: 1
+
+production:
+  clients:
+    default:
+      database: <%= ENV['MONGODB_DATABASE'] || 'auditoria_db' %>
+      hosts:
+        - <%= ENV['MONGODB_HOST'] || 'localhost:27017' %>
+      options:
+        connect_timeout: 10
+        socket_timeout: 5
+        server_selection_timeout: 5
+        max_pool_size: 5
+        min_pool_size: 1
+        max_idle_time: 30
+        read:
+          mode: :primary
+        write:
+          w: 1
+
+# Global options
+options:
+  raise_not_found_error: false
+  use_utc: true
+  use_activesupport_time_zone: true

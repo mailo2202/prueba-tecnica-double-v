@@ -1,0 +1,135 @@
+# Archivos y directorios que deben ser ignorados por Git
+
+## Archivos del Sistema Operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+## Archivos de IDEs y Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+## Archivos de Logs
+*.log
+logs/
+log/
+
+## Archivos Temporales
+tmp/
+temp/
+*.tmp
+*.temp
+
+## Archivos de Base de Datos
+*.db
+*.sqlite
+*.sqlite3
+
+## Archivos de Configuración Local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+## Archivos de Dependencias
+node_modules/
+vendor/bundle/
+vendor/cache/
+
+## Archivos de Build
+bin/
+obj/
+out/
+dist/
+build/
+
+## Archivos de Docker
+.dockerignore
+
+## Archivos de Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+## Archivos de .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+packages/
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+## Archivos de Oracle
+*.ora
+*.dmp
+*.exp
+*.imp
+
+## Archivos de MongoDB
+*.bson
+*.json.backup
+
+## Archivos de Certificados
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+## Archivos de Backup
+*.bak
+*.backup
+*.old
+
+## Archivos de Compresión
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+## Archivos de Documentación Generada
+doc/
+docs/_build/
+site/
+
+## Archivos de Configuración de Servicios
+docker-compose.override.yml
+docker-compose.local.yml
+
+## Archivos de Datos de Desarrollo
+data/
+volumes/
+oracle_data/
+mongodb_data/
+
+## Archivos de Scripts Temporales
+*.sh.bak
+*.bat.bak
