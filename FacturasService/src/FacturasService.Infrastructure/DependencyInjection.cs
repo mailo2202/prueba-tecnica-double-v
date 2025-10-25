@@ -27,10 +27,10 @@ public static class DependencyInjection
         services.AddScoped<IFacturaRepository, FacturaRepository>();
 
         // Configuración de HttpClient para servicios externos
-        services.AddHttpClient<IClienteService, ClienteService>(client =>
+        services.AddHttpClient<IClientService, ClientService>(client =>
         {
-            var clientesServiceUrl = configuration["Services:ClientesService"];
-            client.BaseAddress = new Uri(clientesServiceUrl ?? "http://localhost:3001/");
+            var clientServiceUrl = configuration["Services:ClientService"];
+            client.BaseAddress = new Uri(clientServiceUrl ?? "http://localhost:3001/");
             client.Timeout = TimeSpan.FromSeconds(30);
         });
 

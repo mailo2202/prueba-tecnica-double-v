@@ -10,7 +10,7 @@ namespace FacturasService.Application.Commands;
 /// </summary>
 public class CrearFacturaCommand : IRequest<CrearFacturaResponse>
 {
-    public int ClienteId { get; set; }
+    public int ClientId { get; set; }
     public decimal Monto { get; set; }
     public DateTime FechaEmision { get; set; }
     public string Descripcion { get; set; } = string.Empty;
@@ -33,16 +33,16 @@ public class CrearFacturaResponse
 public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, CrearFacturaResponse>
 {
     private readonly IFacturaRepository _facturaRepository;
-    private readonly IClienteService _clienteService;
+    private readonly IClientService _clientService;
     private readonly IAuditoriaService _auditoriaService;
 
     public CrearFacturaCommandHandler(
         IFacturaRepository facturaRepository,
-        IClienteService clienteService,
+        IClientService clientService,
         IAuditoriaService auditoriaService)
     {
         _facturaRepository = facturaRepository;
-        _clienteService = clienteService;
+        _clientService = clientService;
         _auditoriaService = auditoriaService;
     }
 
@@ -51,26 +51,26 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
         try
         {
             // Validar que el cliente existe
-            var clienteExiste = await _clienteService.ClienteExisteAsync(request.ClienteId);
-            if (!clienteExiste)
+            var clientExiste = await _clientService.ClientExisteAsync(request.ClientId);
+            if (!clientExiste)
             {
                 await _auditoriaService.RegistrarEventoAsync(
                     "ERROR", 
                     "Factura", 
-                    request.ClienteId, 
-                    $"Cliente con ID {request.ClienteId} no existe"
+                    request.ClientId, 
+                    $"Client con ID {request.ClientId} no existe"
                 );
                 
                 return new CrearFacturaResponse
                 {
                     Exitoso = false,
-                    Mensaje = "El cliente especificado no existe"
+                    Mensaje = "El client especificado no existe"
                 };
             }
 
             // Crear la factura
             var factura = new Factura(
-                request.ClienteId,
+                request.ClientId,
                 request.Monto,
                 request.FechaEmision,
                 request.Descripcion
@@ -99,7 +99,7 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
             await _auditoriaService.RegistrarEventoAsync(
                 "ERROR",
                 "Factura",
-                request.ClienteId,
+                request.ClientId,
                 $"Error al crear factura: {ex.Message}"
             );
 

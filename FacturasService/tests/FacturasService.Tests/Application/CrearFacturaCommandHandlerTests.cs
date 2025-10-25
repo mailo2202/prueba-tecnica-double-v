@@ -13,36 +13,36 @@ namespace FacturasService.Tests.Application;
 public class CrearFacturaCommandHandlerTests
 {
     private readonly Mock<IFacturaRepository> _facturaRepositoryMock;
-    private readonly Mock<IClienteService> _clienteServiceMock;
+    private readonly Mock<IClientService> _clientServiceMock;
     private readonly Mock<IAuditoriaService> _auditoriaServiceMock;
     private readonly CrearFacturaCommandHandler _handler;
 
     public CrearFacturaCommandHandlerTests()
     {
         _facturaRepositoryMock = new Mock<IFacturaRepository>();
-        _clienteServiceMock = new Mock<IClienteService>();
+        _clientServiceMock = new Mock<IClientService>();
         _auditoriaServiceMock = new Mock<IAuditoriaService>();
         
         _handler = new CrearFacturaCommandHandler(
             _facturaRepositoryMock.Object,
-            _clienteServiceMock.Object,
+            _clientServiceMock.Object,
             _auditoriaServiceMock.Object
         );
     }
 
     [Fact]
-    public async Task Handle_ConClienteExistente_DebeCrearFacturaExitosamente()
+    public async Task Handle_ConClientExistente_DebeCrearFacturaExitosamente()
     {
         // Arrange
         var command = new CrearFacturaCommand
         {
-            ClienteId = 1,
+            ClientId = 1,
             Monto = 150000,
             FechaEmision = DateTime.UtcNow,
             Descripcion = "Servicios de consultoría"
         };
 
-        _clienteServiceMock.Setup(x => x.ClienteExisteAsync(command.ClienteId))
+        _clientServiceMock.Setup(x => x.ClientExisteAsync(command.ClientId))
             .ReturnsAsync(true);
 
         _facturaRepositoryMock.Setup(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()))
@@ -58,25 +58,25 @@ public class CrearFacturaCommandHandlerTests
         result.Id.Should().BeGreaterThan(0);
         result.NumeroFactura.Should().NotBeNullOrEmpty();
 
-        _clienteServiceMock.Verify(x => x.ClienteExisteAsync(command.ClienteId), Times.Once);
+        _clientServiceMock.Verify(x => x.ClientExisteAsync(command.ClientId), Times.Once);
         _facturaRepositoryMock.Verify(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()), Times.Once);
         _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
             "CREAR", "Factura", It.IsAny<int>(), It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ConClienteInexistente_DebeRetornarError()
+    public async Task Handle_ConClientInexistente_DebeRetornarError()
     {
         // Arrange
         var command = new CrearFacturaCommand
         {
-            ClienteId = 999,
+            ClientId = 999,
             Monto = 150000,
             FechaEmision = DateTime.UtcNow,
             Descripcion = "Servicios de consultoría"
         };
 
-        _clienteServiceMock.Setup(x => x.ClienteExisteAsync(command.ClienteId))
+        _clientServiceMock.Setup(x => x.ClientExisteAsync(command.ClientId))
             .ReturnsAsync(false);
 
         // Act
@@ -85,12 +85,12 @@ public class CrearFacturaCommandHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Exitoso.Should().BeFalse();
-        result.Mensaje.Should().Be("El cliente especificado no existe");
+        result.Mensaje.Should().Be("El client especificado no existe");
 
-        _clienteServiceMock.Verify(x => x.ClienteExisteAsync(command.ClienteId), Times.Once);
+        _clientServiceMock.Verify(x => x.ClientExisteAsync(command.ClientId), Times.Once);
         _facturaRepositoryMock.Verify(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()), Times.Never);
         _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
-            "ERROR", "Factura", command.ClienteId, It.IsAny<string>()), Times.Once);
+            "ERROR", "Factura", command.ClientId, It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
@@ -99,13 +99,13 @@ public class CrearFacturaCommandHandlerTests
         // Arrange
         var command = new CrearFacturaCommand
         {
-            ClienteId = 1,
+            ClientId = 1,
             Monto = 150000,
             FechaEmision = DateTime.UtcNow,
             Descripcion = "Servicios de consultoría"
         };
 
-        _clienteServiceMock.Setup(x => x.ClienteExisteAsync(command.ClienteId))
+        _clientServiceMock.Setup(x => x.ClientExisteAsync(command.ClientId))
             .ReturnsAsync(true);
 
         _facturaRepositoryMock.Setup(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()))
@@ -120,6 +120,6 @@ public class CrearFacturaCommandHandlerTests
         result.Mensaje.Should().Contain("Error interno");
 
         _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
-            "ERROR", "Factura", command.ClienteId, It.IsAny<string>()), Times.Once);
+            "ERROR", "Factura", command.ClientId, It.IsAny<string>()), Times.Once);
     }
 }

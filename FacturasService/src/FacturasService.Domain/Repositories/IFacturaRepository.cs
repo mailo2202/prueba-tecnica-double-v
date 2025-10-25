@@ -1,3 +1,5 @@
+using FacturasService.Domain.Entities;
+
 namespace FacturasService.Domain.Repositories;
 
 /// <summary>
@@ -16,9 +18,9 @@ public interface IFacturaRepository
     Task<IEnumerable<Factura>> ObtenerPorRangoFechasAsync(DateTime fechaInicio, DateTime fechaFin);
 
     /// <summary>
-    /// Obtiene todas las facturas de un cliente
+    /// Obtiene todas las facturas de un client
     /// </summary>
-    Task<IEnumerable<Factura>> ObtenerPorClienteAsync(int clienteId);
+    Task<IEnumerable<Factura>> ObtenerPorClientAsync(int clientId);
 
     /// <summary>
     /// Crea una nueva factura

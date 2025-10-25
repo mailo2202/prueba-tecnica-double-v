@@ -15,7 +15,7 @@ graph TB
     
     subgraph "Microservicios"
         FS[FacturasService<br/>.NET Core<br/>Puerto 5000]
-        CS[ClientesService<br/>Ruby on Rails<br/>Puerto 3001]
+        CS[ClientService<br/>Ruby on Rails<br/>Puerto 3001]
         AS[AuditoriaService<br/>Ruby on Rails<br/>Puerto 3002]
     end
     
@@ -57,16 +57,16 @@ graph TB
 sequenceDiagram
     participant C as Cliente
     participant F as FacturasService
-    participant CS as ClientesService
+    participant CS as ClientService
     participant AS as AuditoriaService
     participant O as Oracle
     participant M as MongoDB
     
     C->>F: POST /api/facturas
-    F->>CS: GET /api/v1/clientes/{id}
-    CS->>O: SELECT cliente
-    O-->>CS: Cliente encontrado
-    CS-->>F: Cliente válido
+    F->>CS: GET /api/v1/client/{id}
+    CS->>O: SELECT client
+    O-->>CS: Client encontrado
+    CS-->>F: Client válido
     F->>O: INSERT factura
     O-->>F: Factura creada
     F->>AS: POST /api/v1/auditoria
@@ -123,12 +123,12 @@ graph TB
     RULES --> ENT
 ```
 
-## Patrón MVC - ClientesService
+## Patrón MVC - ClientService
 
 ```mermaid
 graph TB
     subgraph "Model"
-        CLIENTE[Cliente Model]
+        CLIENT[Client Model]
         VALIDATIONS[Validations]
         CALLBACKS[Callbacks]
     end
@@ -139,15 +139,15 @@ graph TB
     end
     
     subgraph "Controller"
-        CTRL[ClientesController]
+        CTRL[ClientController]
         ACTIONS[Actions]
         FILTERS[Before Actions]
     end
     
     CTRL --> ACTIONS
-    ACTIONS --> CLIENTE
-    CLIENTE --> VALIDATIONS
-    CLIENTE --> CALLBACKS
+    ACTIONS --> CLIENT
+    CLIENT --> VALIDATIONS
+    CLIENT --> CALLBACKS
     ACTIONS --> JSON
     JSON --> RESPONSE
     FILTERS --> ACTIONS
@@ -158,7 +158,7 @@ graph TB
 ```mermaid
 graph LR
     subgraph "Datos Transaccionales"
-        CLIENTES[Clientes]
+        CLIENT[Client]
         FACTURAS[Facturas]
         ORACLE[(Oracle Database)]
     end
@@ -169,7 +169,7 @@ graph LR
         MONGO[(MongoDB)]
     end
     
-    CLIENTES --> ORACLE
+    CLIENT --> ORACLE
     FACTURAS --> ORACLE
     EVENTOS --> MONGO
     LOGS --> MONGO
@@ -203,7 +203,7 @@ graph LR
 ## Comunicación Entre Servicios
 
 ### Síncrona (REST)
-- Validación de cliente antes de crear factura
+- Validación de client antes de crear factura
 - Consultas inmediatas que requieren respuesta
 
 ### Asíncrona (Eventos)

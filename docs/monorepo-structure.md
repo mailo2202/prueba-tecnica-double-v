@@ -13,7 +13,7 @@ facturacion-electronica/
 │   ├── tests/                    # Pruebas unitarias
 │   ├── Dockerfile               # Imagen Docker
 │   └── README.md                # Documentación específica
-├── ClientesService/              # Microservicio Ruby on Rails
+├── ClientService/              # Microservicio Ruby on Rails
 │   ├── app/                     # Aplicación Rails
 │   ├── spec/                    # Pruebas RSpec
 │   ├── Dockerfile              # Imagen Docker
@@ -92,7 +92,7 @@ docker-compose ps
 ### Estructura de Commits
 ```
 feat(facturas): agregar validación de cliente
-fix(clientes): corregir validación de email
+fix(client): corregir validación de email
 docs: actualizar documentación de API
 test(auditoria): agregar pruebas de integración
 ```
@@ -100,7 +100,7 @@ test(auditoria): agregar pruebas de integración
 ### Ramas por Funcionalidad
 ```
 feature/nueva-validacion-facturas
-bugfix/correccion-cliente-duplicado
+bugfix/correccion-client-duplicado
 docs/actualizacion-readme
 ```
 

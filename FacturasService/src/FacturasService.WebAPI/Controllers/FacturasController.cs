@@ -34,7 +34,7 @@ public class FacturasController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Creando factura para cliente {ClienteId}", request.ClienteId);
+            _logger.LogInformation("Creando factura para client {ClientId}", request.ClientId);
 
             var response = await _mediator.Send(request);
 

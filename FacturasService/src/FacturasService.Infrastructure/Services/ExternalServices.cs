@@ -1,31 +1,32 @@
+using Microsoft.Extensions.Logging;
 using FacturasService.Domain.Services;
 
 namespace FacturasService.Infrastructure.Services;
 
 /// <summary>
-/// Servicio para validar clientes mediante HTTP
+/// Servicio para validar client mediante HTTP
 /// </summary>
-public class ClienteService : IClienteService
+public class ClientService : IClientService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<ClienteService> _logger;
+    private readonly ILogger<ClientService> _logger;
 
-    public ClienteService(HttpClient httpClient, ILogger<ClienteService> logger)
+    public ClientService(HttpClient httpClient, ILogger<ClientService> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
     }
 
-    public async Task<bool> ClienteExisteAsync(int clienteId)
+    public async Task<bool> ClientExisteAsync(int clientId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"clientes/{clienteId}");
+            var response = await _httpClient.GetAsync($"client/{clientId}");
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al validar cliente con ID {ClienteId}", clienteId);
+            _logger.LogError(ex, "Error al validar client con ID {ClientId}", clientId);
             return false;
         }
     }

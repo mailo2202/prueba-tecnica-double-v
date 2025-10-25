@@ -19,17 +19,17 @@ Este proyecto implementa un sistema de microservicios para la facturación elect
      - `GET /api/facturas?fechaInicio=xx&fechaFin=yy` - Listar facturas por rango
      - `GET /api/health` - Estado del servicio
 
-2. **Servicio de Clientes** (Ruby on Rails)
-   - **Responsabilidad**: Gestión de información de clientes
+2. **Servicio de Client** (Ruby on Rails)
+   - **Responsabilidad**: Gestión de información de client
    - **Tecnología**: Ruby on Rails con MVC
    - **Base de datos**: Oracle (transaccional)
    - **Puerto**: 3001
    - **Endpoints principales**:
-     - `POST /api/v1/clientes` - Registrar cliente
-     - `GET /api/v1/clientes/{id}` - Consultar cliente por ID
-     - `GET /api/v1/clientes` - Listar clientes
-     - `PUT /api/v1/clientes/{id}` - Actualizar cliente
-     - `DELETE /api/v1/clientes/{id}` - Eliminar cliente
+     - `POST /api/v1/client` - Registrar client
+     - `GET /api/v1/client/{id}` - Consultar client por ID
+     - `GET /api/v1/client` - Listar client
+     - `PUT /api/v1/client/{id}` - Actualizar client
+     - `DELETE /api/v1/client/{id}` - Eliminar client
      - `GET /health` - Estado del servicio
 
 3. **Servicio de Auditoría** (Ruby on Rails + MongoDB)
@@ -66,26 +66,14 @@ Este proyecto implementa un sistema de microservicios para la facturación elect
 
 ## Requisitos del Sistema
 
-### Software Requerido
-- Docker y Docker Compose
-- .NET 8.0 SDK (para desarrollo local)
-- Ruby 3.2+ (para desarrollo local)
-- Oracle Database (o Docker container)
-- MongoDB (o Docker container)
-
-### Hardware Mínimo
-- RAM: 8GB
-- CPU: 4 cores
-- Disco: 50GB libres
-
 ## Instalación y Ejecución
 
 ### Opción 1: Docker Compose (Recomendado)
 
 ```bash
 # Clonar el repositorio
-git clone <repository-url>
-cd facturacion-electronica
+git clone git@github.com:mailo2202/prueba-tecnica-double-v.git
+cd prueba-tecnica-double-v
 
 # Levantar todos los servicios
 docker-compose up -d
@@ -95,31 +83,8 @@ docker-compose ps
 
 # Ver logs en tiempo real
 docker-compose logs -f
-```
 
-### Opción 2: Script de Gestión
-
-```bash
-# Hacer ejecutable el script (Linux/Mac)
-chmod +x scripts/manage.sh
-
-# Inicializar el sistema completo
-./scripts/manage.sh init
-
-# Ver estado de servicios
-./scripts/manage.sh status
-
-# Ver logs de un servicio específico
-./scripts/manage.sh logs facturas-service
-
-# Ejecutar todas las pruebas
-./scripts/manage.sh test
-
-# Detener el sistema
-./scripts/manage.sh stop
-```
-
-### Opción 3: Ejecución Manual
+### Opción 2: Ejecución Manual
 
 #### Servicio de Facturas (.NET)
 ```bash
@@ -128,9 +93,9 @@ dotnet restore
 dotnet run --project src/FacturasService.WebAPI
 ```
 
-#### Servicio de Clientes (Ruby)
+#### Servicio de Client (Ruby)
 ```bash
-cd ClientesService
+cd ClientService
 bundle install
 rails server -p 3001
 ```
@@ -144,10 +109,10 @@ rails server -p 3002
 
 ## Endpoints de Prueba
 
-### Servicio de Clientes
+### Servicio de Client
 ```bash
 # Crear cliente
-curl -X POST http://localhost:3001/api/v1/clientes \
+curl -X POST http://localhost:3001/api/v1/client \
   -H "Content-Type: application/json" \
   -d '{
     "cliente": {
@@ -160,13 +125,13 @@ curl -X POST http://localhost:3001/api/v1/clientes \
   }'
 
 # Consultar cliente
-curl http://localhost:3001/api/v1/clientes/1
+curl http://localhost:3001/api/v1/client/1
 
 # Listar clientes
-curl http://localhost:3001/api/v1/clientes
+curl http://localhost:3001/api/v1/client
 
 # Actualizar cliente
-curl -X PUT http://localhost:3001/api/v1/clientes/1 \
+curl -X PUT http://localhost:3001/api/v1/client/1 \
   -H "Content-Type: application/json" \
   -d '{
     "cliente": {
@@ -218,55 +183,6 @@ curl http://localhost:3002/api/v1/audit/service/FacturasService
 
 # Listar eventos recientes
 curl http://localhost:3002/api/v1/audit
-```
-
-## Estructura de Carpetas
-
-```
-├── FacturasService/              # Microservicio .NET Core
-│   ├── src/
-│   │   ├── FacturasService.Domain/          # Capa de Dominio
-│   │   │   ├── Entities/                   # Entidades de dominio
-│   │   │   ├── Repositories/               # Interfaces de repositorios
-│   │   │   └── Services/                   # Servicios de dominio
-│   │   ├── FacturasService.Application/    # Capa de Aplicación
-│   │   │   ├── Commands/                   # Comandos CQRS
-│   │   │   ├── Queries/                    # Consultas CQRS
-│   │   │   └── Validators/                 # Validadores FluentValidation
-│   │   ├── FacturasService.Infrastructure/ # Capa de Infraestructura
-│   │   │   ├── Data/                       # Contexto de Entity Framework
-│   │   │   ├── Repositories/               # Implementaciones de repositorios
-│   │   │   └── Services/                    # Servicios externos
-│   │   └── FacturasService.WebAPI/         # Capa de Presentación
-│   │       ├── Controllers/                # Controladores MVC
-│   │       └── Program.cs                   # Configuración de la aplicación
-│   ├── tests/                              # Pruebas unitarias
-│   └── Dockerfile
-├── ClientesService/                         # Microservicio Ruby on Rails
-│   ├── app/
-│   │   ├── controllers/api/v1/             # Controladores API
-│   │   ├── models/                         # Modelos ActiveRecord
-│   │   └── services/                       # Servicios de negocio
-│   ├── config/                             # Configuración Rails
-│   ├── db/migrate/                         # Migraciones de base de datos
-│   ├── spec/                               # Pruebas RSpec
-│   └── Dockerfile
-├── AuditoriaService/                       # Microservicio Ruby on Rails + MongoDB
-│   ├── app/
-│   │   ├── controllers/api/v1/             # Controladores API
-│   │   ├── models/                         # Modelos Mongoid
-│   │   └── services/                       # Servicios de negocio
-│   ├── config/                             # Configuración Rails + Mongoid
-│   ├── spec/                               # Pruebas RSpec
-│   └── Dockerfile
-├── scripts/                                # Scripts de gestión
-│   ├── oracle/                             # Scripts de Oracle
-│   ├── mongodb/                            # Scripts de MongoDB
-│   └── manage.sh                           # Script de gestión del sistema
-├── nginx/                                  # Configuración de proxy reverso
-├── docker-compose.yml                      # Orquestación de servicios
-└── README.md
-```
 
 ## Validaciones Implementadas
 
@@ -317,7 +233,7 @@ dotnet test
 
 ### Servicio de Clientes (Ruby)
 ```bash
-cd ClientesService
+cd ClientService
 bundle exec rspec
 ```
 
@@ -330,7 +246,7 @@ bundle exec rspec
 ## Comunicación Entre Servicios
 
 ### Síncrona (REST)
-- **Validación de cliente**: FacturasService → ClientesService
+- **Validación de cliente**: FacturasService → ClientService
 - **Consultas inmediatas**: Requieren respuesta inmediata
 
 ### Asíncrona (Eventos)
@@ -398,7 +314,7 @@ MONGODB_HOST=mongodb-server
 MONGODB_DATABASE=auditoria_db
 
 # Servicios
-CLIENTES_SERVICE_URL=http://clientes-service:3001
+CLIENTES_SERVICE_URL=http://client-service:3001
 AUDITORIA_SERVICE_URL=http://auditoria-service:3002
 ```
 

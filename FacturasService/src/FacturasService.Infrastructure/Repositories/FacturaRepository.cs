@@ -31,10 +31,10 @@ public class FacturaRepository : IFacturaRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Factura>> ObtenerPorClienteAsync(int clienteId)
+    public async Task<IEnumerable<Factura>> ObtenerPorClientAsync(int clientId)
     {
         return await _context.Facturas
-            .Where(f => f.ClienteId == clienteId)
+            .Where(f => f.ClientId == clientId)
             .OrderByDescending(f => f.FechaEmision)
             .ToListAsync();
     }

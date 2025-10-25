@@ -13,16 +13,16 @@ public class FacturaTests
     public void CrearFactura_ConDatosValidos_DebeCrearFacturaCorrectamente()
     {
         // Arrange
-        var clienteId = 1;
+        var clientId = 1;
         var monto = 150000.50m;
         var fechaEmision = DateTime.UtcNow;
         var descripcion = "Servicios de consultoría";
 
         // Act
-        var factura = new Factura(clienteId, monto, fechaEmision, descripcion);
+        var factura = new Factura(clientId, monto, fechaEmision, descripcion);
 
         // Assert
-        factura.ClienteId.Should().Be(clienteId);
+        factura.ClientId.Should().Be(clientId);
         factura.Monto.Should().Be(monto);
         factura.FechaEmision.Should().Be(fechaEmision);
         factura.Descripcion.Should().Be(descripcion);
@@ -34,7 +34,7 @@ public class FacturaTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void CrearFactura_ConClienteIdInvalido_DebeLanzarExcepcion(int clienteIdInvalido)
+    public void CrearFactura_ConClientIdInvalido_DebeLanzarExcepcion(int clientIdInvalido)
     {
         // Arrange
         var monto = 150000.50m;
@@ -43,9 +43,9 @@ public class FacturaTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clienteIdInvalido, monto, fechaEmision, descripcion));
+            new Factura(clientIdInvalido, monto, fechaEmision, descripcion));
         
-        exception.Message.Should().Contain("El ID del cliente debe ser mayor a 0");
+        exception.Message.Should().Contain("El ID del client debe ser mayor a 0");
     }
 
     [Theory]
@@ -54,13 +54,13 @@ public class FacturaTests
     public void CrearFactura_ConMontoInvalido_DebeLanzarExcepcion(decimal montoInvalido)
     {
         // Arrange
-        var clienteId = 1;
+        var clientId = 1;
         var fechaEmision = DateTime.UtcNow;
         var descripcion = "Servicios de consultoría";
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clienteId, montoInvalido, fechaEmision, descripcion));
+            new Factura(clientId, montoInvalido, fechaEmision, descripcion));
         
         exception.Message.Should().Contain("El monto debe ser mayor a 0");
     }
@@ -72,13 +72,13 @@ public class FacturaTests
     public void CrearFactura_ConDescripcionInvalida_DebeLanzarExcepcion(string descripcionInvalida)
     {
         // Arrange
-        var clienteId = 1;
+        var clientId = 1;
         var monto = 150000.50m;
         var fechaEmision = DateTime.UtcNow;
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clienteId, monto, fechaEmision, descripcionInvalida));
+            new Factura(clientId, monto, fechaEmision, descripcionInvalida));
         
         exception.Message.Should().Contain("La descripción es requerida");
     }
@@ -87,14 +87,14 @@ public class FacturaTests
     public void CrearFactura_ConFechaEmisionFutura_DebeLanzarExcepcion()
     {
         // Arrange
-        var clienteId = 1;
+        var clientId = 1;
         var monto = 150000.50m;
         var fechaEmisionFutura = DateTime.UtcNow.AddDays(2);
         var descripcion = "Servicios de consultoría";
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clienteId, monto, fechaEmisionFutura, descripcion));
+            new Factura(clientId, monto, fechaEmisionFutura, descripcion));
         
         exception.Message.Should().Contain("La fecha de emisión no puede ser futura");
     }

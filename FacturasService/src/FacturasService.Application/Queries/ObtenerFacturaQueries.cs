@@ -27,7 +27,7 @@ public class ObtenerFacturasPorRangoQuery : IRequest<IEnumerable<ObtenerFacturaR
 public class ObtenerFacturaResponse
 {
     public int Id { get; set; }
-    public int ClienteId { get; set; }
+    public int ClientId { get; set; }
     public decimal Monto { get; set; }
     public DateTime FechaEmision { get; set; }
     public string Descripcion { get; set; } = string.Empty;
@@ -57,7 +57,7 @@ public class ObtenerFacturaPorIdQueryHandler : IRequestHandler<ObtenerFacturaPor
         return new ObtenerFacturaResponse
         {
             Id = factura.Id,
-            ClienteId = factura.ClienteId,
+            ClientId = factura.ClientId,
             Monto = factura.Monto,
             FechaEmision = factura.FechaEmision,
             Descripcion = factura.Descripcion,
@@ -86,7 +86,7 @@ public class ObtenerFacturasPorRangoQueryHandler : IRequestHandler<ObtenerFactur
         return facturas.Select(f => new ObtenerFacturaResponse
         {
             Id = f.Id,
-            ClienteId = f.ClienteId,
+            ClientId = f.ClientId,
             Monto = f.Monto,
             FechaEmision = f.FechaEmision,
             Descripcion = f.Descripcion,

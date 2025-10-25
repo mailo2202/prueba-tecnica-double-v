@@ -1,5 +1,5 @@
-# Use Ruby 3.2.0 as base image
-FROM ruby:3.2.0-slim
+# Use Ruby 3.4.7 as base image
+FROM ruby:3.4.7-slim
 
 # Install system dependencies
 RUN apt-get update -qq && apt-get install -y \
@@ -7,6 +7,8 @@ RUN apt-get update -qq && apt-get install -y \
     libpq-dev \
     curl \
     git \
+    libyaml-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

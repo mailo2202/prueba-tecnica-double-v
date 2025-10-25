@@ -3,12 +3,12 @@ namespace FacturasService.Domain.Services;
 /// <summary>
 /// Servicio de dominio para validaciones de facturas
 /// </summary>
-public interface IClienteService
+public interface IClientService
 {
     /// <summary>
-    /// Valida si un cliente existe en el sistema
+    /// Valida si un client existe en el sistema
     /// </summary>
-    Task<bool> ClienteExisteAsync(int clienteId);
+    Task<bool> ClientExisteAsync(int clientId);
 }
 
 /// <summary>

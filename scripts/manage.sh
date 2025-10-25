@@ -72,9 +72,9 @@ run_tests() {
     echo "Ejecutando pruebas del servicio de Facturas..."
     docker-compose exec facturas-service dotnet test
     
-    # Pruebas del servicio de Clientes (Ruby)
-    echo "Ejecutando pruebas del servicio de Clientes..."
-    docker-compose exec clientes-service bundle exec rspec
+    # Pruebas del servicio de Client (Ruby)
+    echo "Ejecutando pruebas del servicio de Client..."
+    docker-compose exec client-service bundle exec rspec
     
     # Pruebas del servicio de Auditoría (Ruby)
     echo "Ejecutando pruebas del servicio de Auditoría..."

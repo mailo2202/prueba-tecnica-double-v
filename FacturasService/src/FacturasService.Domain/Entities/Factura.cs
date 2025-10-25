@@ -8,7 +8,7 @@ namespace FacturasService.Domain.Entities;
 public class Factura
 {
     public int Id { get; private set; }
-    public int ClienteId { get; private set; }
+    public int ClientId { get; private set; }
     public decimal Monto { get; private set; }
     public DateTime FechaEmision { get; private set; }
     public string Descripcion { get; private set; } = string.Empty;
@@ -20,9 +20,9 @@ public class Factura
     private Factura() { }
 
     // Constructor público para crear nuevas facturas
-    public Factura(int clienteId, decimal monto, DateTime fechaEmision, string descripcion)
+    public Factura(int clientId, decimal monto, DateTime fechaEmision, string descripcion)
     {
-        ClienteId = clienteId;
+        ClientId = clientId;
         Monto = monto;
         FechaEmision = fechaEmision;
         Descripcion = descripcion;
@@ -50,8 +50,8 @@ public class Factura
     /// </summary>
     private void Validar()
     {
-        if (ClienteId <= 0)
-            throw new ArgumentException("El ID del cliente debe ser mayor a 0", nameof(ClienteId));
+        if (ClientId <= 0)
+            throw new ArgumentException("El ID del client debe ser mayor a 0", nameof(ClientId));
 
         if (Monto <= 0)
             throw new ArgumentException("El monto debe ser mayor a 0", nameof(Monto));

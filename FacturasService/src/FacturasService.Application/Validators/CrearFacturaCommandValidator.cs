@@ -9,9 +9,9 @@ public class CrearFacturaCommandValidator : AbstractValidator<Commands.CrearFact
 {
     public CrearFacturaCommandValidator()
     {
-        RuleFor(x => x.ClienteId)
+        RuleFor(x => x.ClientId)
             .GreaterThan(0)
-            .WithMessage("El ID del cliente debe ser mayor a 0");
+            .WithMessage("El ID del client debe ser mayor a 0");
 
         RuleFor(x => x.Monto)
             .GreaterThan(0)
