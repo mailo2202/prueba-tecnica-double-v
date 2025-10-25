@@ -79,7 +79,7 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
             var facturaCreada = await _facturaRepository.CrearAsync(factura);
 
             // Registrar evento de auditoría
-            await _auditoriaService.RegistrarEventoAsync(
+            await _auditService.RegistrarEventoAsync(
                 "CREAR",
                 "Factura",
                 facturaCreada.Id,
@@ -96,7 +96,7 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
         }
         catch (Exception ex)
         {
-            await _auditoriaService.RegistrarEventoAsync(
+            await _auditService.RegistrarEventoAsync(
                 "ERROR",
                 "Factura",
                 request.ClientId,

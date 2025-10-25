@@ -1,4 +1,20 @@
-class Client < ApplicationRecord
+class Client
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  # Fields
+  field :nombre, type: String
+  field :identificacion, type: String
+  field :email, type: String
+  field :direccion, type: String
+  field :telefono, type: String
+  field :activo, type: Boolean, default: true
+
+  # Indexes
+  index({ identificacion: 1 }, { unique: true })
+  index({ email: 1 })
+  index({ activo: 1 })
+
   # Validaciones
   validates :nombre, presence: true, length: { maximum: 255 }
   validates :identificacion, presence: true, uniqueness: true, length: { maximum: 50 }
@@ -40,9 +56,9 @@ class Client < ApplicationRecord
 
   def register_audit_event
     AuditService.new.register_event(
-      event_type: saved_change_to_id? ? 'CREATE' : (destroyed? ? 'DELETE' : 'UPDATE'),
+      event_type: persisted? ? (destroyed? ? 'DELETE' : 'UPDATE') : 'CREATE',
       entity: 'Client',
-      entity_id: id || id_was,
+      entity_id: id,
       details: change_details
     )
   rescue => e
@@ -50,12 +66,12 @@ class Client < ApplicationRecord
   end
 
   def change_details
-    if saved_change_to_id?
+    if new_record?
       "Client created: #{full_name}"
     elsif destroyed?
       "Client deleted: #{full_name}"
     else
-      changes = saved_changes.except('updated_at')
+      changes = changes.except('updated_at')
       "Client updated: #{changes.keys.join(', ')}"
     end
   end

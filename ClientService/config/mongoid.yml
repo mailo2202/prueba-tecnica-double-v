@@ -1,0 +1,65 @@
+development:
+  clients:
+    default:
+      database: client_db
+      hosts:
+        - localhost:27017
+      options:
+        # The write concern. (default: { w: 1 })
+        # write_concern:
+        #   w: 1
+
+        # The read preference. (default: primary)
+        # read:
+        #   mode: :primary
+        #   tag_sets:
+        #     - use: web
+
+        # The default max pool size. (default: 5)
+        max_pool_size: 5
+
+        # The default timeout in seconds when waiting for a connection from the pool. (default: 5)
+        wait_queue_timeout: 5
+
+        # The default timeout in seconds for a connection attempt. (default: 10)
+        connect_timeout: 10
+
+        # The default timeout in seconds for socket operations. (default: 5)
+        socket_timeout: 5
+
+        # The default timeout in seconds for server selection. (default: 5)
+        server_selection_timeout: 5
+
+        # The default heartbeat frequency. (default: 10)
+        heartbeat_frequency: 10
+
+        # The default local threshold. (default: 0.015)
+        local_threshold: 0.015
+
+        # The default retry writes. (default: true)
+        retry_writes: true
+
+        # The default retry reads. (default: true)
+        retry_reads: true
+
+test:
+  clients:
+    default:
+      database: client_test_db
+      hosts:
+        - localhost:27017
+      options:
+        read:
+          mode: :primary
+        max_pool_size: 1
+
+production:
+  clients:
+    default:
+      database: client_db
+      hosts:
+        - mongodb:27017
+      options:
+        read:
+          mode: :primary
+        max_pool_size: 5

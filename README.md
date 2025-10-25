@@ -83,6 +83,7 @@ docker-compose ps
 
 # Ver logs en tiempo real
 docker-compose logs -f
+```
 
 ### Opción 2: Ejecución Manual
 
@@ -220,7 +221,7 @@ curl http://localhost:3002/api/v1/audit
 - **Colección system_config**: Configuración del sistema
 - **Índices**: Optimización de consultas por entidad, servicio, fecha
 - **Vistas**: Consultas predefinidas comunes
-
+```
 ## Pruebas Unitarias
 
 Las pruebas unitarias están implementadas en cada servicio:
@@ -384,7 +385,5 @@ docker stats
 
 - **Desarrollador**: Camilo Muñoz Giraldo
 - **Empresa**: FactuMarket S.A.
-- **Fecha**: Enero 2024
+- **Fecha**: octubre 2025
 - **Versión**: 1.0.0
-
-Para soporte técnico o consultas sobre el sistema, contactar al equipo de desarrollo.
