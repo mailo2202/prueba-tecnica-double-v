@@ -70,7 +70,7 @@ run_tests() {
     
     # Pruebas del servicio de Facturas (.NET)
     echo "Ejecutando pruebas del servicio de Facturas..."
-    docker-compose exec facturas-service dotnet test
+    docker-compose exec invoices-service dotnet test
     
     # Pruebas del servicio de Client (Ruby)
     echo "Ejecutando pruebas del servicio de Client..."
@@ -78,7 +78,7 @@ run_tests() {
     
     # Pruebas del servicio de Auditoría (Ruby)
     echo "Ejecutando pruebas del servicio de Auditoría..."
-    docker-compose exec auditoria-service bundle exec rspec
+    docker-compose exec audit-service bundle exec rspec
 }
 
 # Función para mostrar ayuda
@@ -98,7 +98,7 @@ show_help() {
     echo ""
     echo "Ejemplos:"
     echo "  $0 init"
-    echo "  $0 logs facturas-service"
+    echo "  $0 logs invoices-service"
     echo "  $0 test"
 }
 

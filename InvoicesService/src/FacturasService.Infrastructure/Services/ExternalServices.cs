@@ -35,12 +35,12 @@ public class ClientService : IClientService
 /// <summary>
 /// Servicio para registrar eventos de auditoría
 /// </summary>
-public class AuditoriaService : IAuditoriaService
+public class AuditService : IAuditService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<AuditoriaService> _logger;
+    private readonly ILogger<AuditService> _logger;
 
-    public AuditoriaService(HttpClient httpClient, ILogger<AuditoriaService> logger)
+    public AuditService(HttpClient httpClient, ILogger<AuditService> logger)
     {
         _httpClient = httpClient;
         _logger = logger;

@@ -34,16 +34,16 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
 {
     private readonly IFacturaRepository _facturaRepository;
     private readonly IClientService _clientService;
-    private readonly IAuditoriaService _auditoriaService;
+    private readonly IAuditService _auditService;
 
     public CrearFacturaCommandHandler(
         IFacturaRepository facturaRepository,
         IClientService clientService,
-        IAuditoriaService auditoriaService)
+        IAuditService auditService)
     {
         _facturaRepository = facturaRepository;
         _clientService = clientService;
-        _auditoriaService = auditoriaService;
+        _auditService = auditService;
     }
 
     public async Task<CrearFacturaResponse> Handle(CrearFacturaCommand request, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, C
             var clientExiste = await _clientService.ClientExisteAsync(request.ClientId);
             if (!clientExiste)
             {
-                await _auditoriaService.RegistrarEventoAsync(
+                await _auditService.RegistrarEventoAsync(
                     "ERROR", 
                     "Factura", 
                     request.ClientId, 

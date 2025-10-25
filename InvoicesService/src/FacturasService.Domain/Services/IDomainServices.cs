@@ -14,7 +14,7 @@ public interface IClientService
 /// <summary>
 /// Servicio de dominio para auditoría
 /// </summary>
-public interface IAuditoriaService
+public interface IAuditService
 {
     /// <summary>
     /// Registra un evento de auditoría

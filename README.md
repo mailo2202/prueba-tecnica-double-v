@@ -179,7 +179,7 @@ curl -X POST http://localhost:3002/api/v1/audit \
 curl http://localhost:3002/api/v1/audit/entity/Invoice/1
 
 # Consultar eventos por servicio
-curl http://localhost:3002/api/v1/audit/service/FacturasService
+curl http://localhost:3002/api/v1/audit/service/InvoicesService
 
 # Listar eventos recientes
 curl http://localhost:3002/api/v1/audit
@@ -227,7 +227,7 @@ Las pruebas unitarias están implementadas en cada servicio:
 
 ### Servicio de Facturas (.NET)
 ```bash
-cd FacturasService
+cd InvoicesService
 dotnet test
 ```
 
@@ -239,7 +239,7 @@ bundle exec rspec
 
 ### Servicio de Auditoría (Ruby)
 ```bash
-cd AuditoriaService
+cd AuditService
 bundle exec rspec
 ```
 

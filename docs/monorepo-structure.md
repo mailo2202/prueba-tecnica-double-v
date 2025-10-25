@@ -8,7 +8,7 @@ Este repositorio contiene un sistema de microservicios implementado como monorep
 
 ```
 facturacion-electronica/
-├── FacturasService/              # Microservicio .NET Core
+├── InvoicesService/              # Microservicio .NET Core
 │   ├── src/                      # Código fuente
 │   ├── tests/                    # Pruebas unitarias
 │   ├── Dockerfile               # Imagen Docker
@@ -18,7 +18,7 @@ facturacion-electronica/
 │   ├── spec/                    # Pruebas RSpec
 │   ├── Dockerfile              # Imagen Docker
 │   └── README.md               # Documentación específica
-├── AuditoriaService/            # Microservicio Ruby + MongoDB
+├── AuditService/            # Microservicio Ruby + MongoDB
 │   ├── app/                     # Aplicación Rails
 │   ├── spec/                    # Pruebas RSpec
 │   ├── Dockerfile              # Imagen Docker
@@ -91,15 +91,15 @@ docker-compose ps
 
 ### Estructura de Commits
 ```
-feat(facturas): agregar validación de cliente
+feat(invoices): agregar validación de cliente
 fix(client): corregir validación de email
 docs: actualizar documentación de API
-test(auditoria): agregar pruebas de integración
+test(audit): agregar pruebas de integración
 ```
 
 ### Ramas por Funcionalidad
 ```
-feature/nueva-validacion-facturas
+feature/nueva-validacion-invoices
 bugfix/correccion-client-duplicado
 docs/actualizacion-readme
 ```

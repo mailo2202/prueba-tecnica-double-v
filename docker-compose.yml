@@ -71,7 +71,7 @@ services:
   # Servicio de Auditoría (Ruby on Rails + MongoDB)
   audit-service:
     build:
-      context: ./AuditoriaService
+      context: ./AuditService
       dockerfile: Dockerfile
     container_name: facturacion-audit-service
     environment:
@@ -88,11 +88,11 @@ services:
     restart: unless-stopped
 
   # Servicio de Facturas (.NET Core)
-  facturas-service:
+  invoices-service:
     build:
-      context: ./FacturasService
+      context: ./InvoicesService
       dockerfile: Dockerfile
-    container_name: facturacion-facturas-service
+    container_name: facturacion-invoices-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -125,7 +125,7 @@ services:
     depends_on:
       - client-service
       - audit-service
-      - facturas-service
+      - invoices-service
     networks:
       - facturacion-network
     restart: unless-stopped

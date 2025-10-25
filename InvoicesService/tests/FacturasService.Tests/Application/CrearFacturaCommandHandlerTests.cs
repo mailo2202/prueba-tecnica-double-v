@@ -14,19 +14,19 @@ public class CrearFacturaCommandHandlerTests
 {
     private readonly Mock<IFacturaRepository> _facturaRepositoryMock;
     private readonly Mock<IClientService> _clientServiceMock;
-    private readonly Mock<IAuditoriaService> _auditoriaServiceMock;
+    private readonly Mock<IAuditService> _auditServiceMock;
     private readonly CrearFacturaCommandHandler _handler;
 
     public CrearFacturaCommandHandlerTests()
     {
         _facturaRepositoryMock = new Mock<IFacturaRepository>();
         _clientServiceMock = new Mock<IClientService>();
-        _auditoriaServiceMock = new Mock<IAuditoriaService>();
+        _auditServiceMock = new Mock<IAuditService>();
         
         _handler = new CrearFacturaCommandHandler(
             _facturaRepositoryMock.Object,
             _clientServiceMock.Object,
-            _auditoriaServiceMock.Object
+            _auditServiceMock.Object
         );
     }
 
@@ -60,7 +60,7 @@ public class CrearFacturaCommandHandlerTests
 
         _clientServiceMock.Verify(x => x.ClientExisteAsync(command.ClientId), Times.Once);
         _facturaRepositoryMock.Verify(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()), Times.Once);
-        _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
+        _auditServiceMock.Verify(x => x.RegistrarEventoAsync(
             "CREAR", "Factura", It.IsAny<int>(), It.IsAny<string>()), Times.Once);
     }
 
@@ -89,7 +89,7 @@ public class CrearFacturaCommandHandlerTests
 
         _clientServiceMock.Verify(x => x.ClientExisteAsync(command.ClientId), Times.Once);
         _facturaRepositoryMock.Verify(x => x.CrearAsync(It.IsAny<Domain.Entities.Factura>()), Times.Never);
-        _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
+        _auditServiceMock.Verify(x => x.RegistrarEventoAsync(
             "ERROR", "Factura", command.ClientId, It.IsAny<string>()), Times.Once);
     }
 
@@ -119,7 +119,7 @@ public class CrearFacturaCommandHandlerTests
         result.Exitoso.Should().BeFalse();
         result.Mensaje.Should().Contain("Error interno");
 
-        _auditoriaServiceMock.Verify(x => x.RegistrarEventoAsync(
+        _auditServiceMock.Verify(x => x.RegistrarEventoAsync(
             "ERROR", "Factura", command.ClientId, It.IsAny<string>()), Times.Once);
     }
 }

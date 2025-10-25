@@ -34,10 +34,10 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(30);
         });
 
-        services.AddHttpClient<IAuditoriaService, AuditoriaService>(client =>
+        services.AddHttpClient<IAuditService, AuditService>(client =>
         {
-            var auditoriaServiceUrl = configuration["Services:AuditoriaService"];
-            client.BaseAddress = new Uri(auditoriaServiceUrl ?? "http://localhost:3002/");
+            var auditServiceUrl = configuration["Services:AuditService"];
+            client.BaseAddress = new Uri(auditServiceUrl ?? "http://localhost:3002/");
             client.Timeout = TimeSpan.FromSeconds(30);
         });
 

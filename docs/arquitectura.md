@@ -14,9 +14,9 @@ graph TB
     end
     
     subgraph "Microservicios"
-        FS[FacturasService<br/>.NET Core<br/>Puerto 5000]
+        FS[InvoicesService<br/>.NET Core<br/>Puerto 5000]
         CS[ClientService<br/>Ruby on Rails<br/>Puerto 3001]
-        AS[AuditoriaService<br/>Ruby on Rails<br/>Puerto 3002]
+        AS[AuditService<br/>Ruby on Rails<br/>Puerto 3002]
     end
     
     subgraph "Bases de Datos"
@@ -56,20 +56,20 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant C as Cliente
-    participant F as FacturasService
+    participant F as InvoicesService
     participant CS as ClientService
-    participant AS as AuditoriaService
+    participant AS as AuditService
     participant O as Oracle
     participant M as MongoDB
     
-    C->>F: POST /api/facturas
+    C->>F: POST /api/invoices
     F->>CS: GET /api/v1/client/{id}
     CS->>O: SELECT client
     O-->>CS: Client encontrado
     CS-->>F: Client válido
     F->>O: INSERT factura
     O-->>F: Factura creada
-    F->>AS: POST /api/v1/auditoria
+    F->>AS: POST /api/v1/audit
     AS->>M: INSERT evento
     M-->>AS: Evento registrado
     AS-->>F: Auditoría OK
@@ -78,7 +78,7 @@ sequenceDiagram
     Note over F,AS: Comunicación asíncrona<br/>para auditoría
 ```
 
-## Arquitectura Clean Architecture - FacturasService
+## Arquitectura Clean Architecture - InvoicesService
 
 ```mermaid
 graph TB

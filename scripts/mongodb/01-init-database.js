@@ -64,7 +64,7 @@ db.audit_events.insertMany([
     "entity": "Invoice",
     "entity_id": 1,
     "details": "Invoice created: FAC-20240115001, Amount: $150,000.00",
-    "service": "FacturasService",
+    "service": "InvoicesService",
     "timestamp": new Date(),
     "user_id": 1,
     "ip_address": "192.168.1.101",
@@ -118,7 +118,7 @@ db.audit_events.insertMany([
     "entity": "Invoice",
     "entity_id": 0,
     "details": "Error creating invoice: Client with ID 999 does not exist",
-    "service": "FacturasService",
+    "service": "InvoicesService",
     "timestamp": new Date(),
     "user_id": 1,
     "ip_address": "192.168.1.104",
@@ -141,7 +141,7 @@ db.audit_stats.insertOne({
   "total_events": 5,
   "events_by_service": {
     "ClientsService": 3,
-    "FacturasService": 2
+    "InvoicesService": 2
   },
   "events_by_type": {
     "CREATE": 2,
