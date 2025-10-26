@@ -1,32 +1,32 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FacturasService.Domain.Repositories;
-using FacturasService.Domain.Services;
-using FacturasService.Infrastructure.Data;
-using FacturasService.Infrastructure.Repositories;
-using FacturasService.Infrastructure.Services;
+using InvoicesService.Domain.Repositories;
+using InvoicesService.Domain.Services;
+using InvoicesService.Infrastructure.Data;
+using InvoicesService.Infrastructure.Repositories;
+using InvoicesService.Infrastructure.Services;
 
-namespace FacturasService.Infrastructure;
+namespace InvoicesService.Infrastructure;
 
 /// <summary>
-/// Configuración de dependencias de la capa de infraestructura
+/// Infrastructure layer dependency configuration
 /// </summary>
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configuración de Entity Framework con Oracle
-        services.AddDbContext<FacturasDbContext>(options =>
+        // Entity Framework configuration with Oracle
+        services.AddDbContext<InvoicesDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("OracleConnection");
             options.UseOracle(connectionString);
         });
 
-        // Registro de repositorios
-        services.AddScoped<IFacturaRepository, FacturaRepository>();
+        // Repository registration
+        services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
-        // Configuración de HttpClient para servicios externos
+        // HttpClient configuration for external services
         services.AddHttpClient<IClientService, ClientService>(client =>
         {
             var clientServiceUrl = configuration["Services:ClientService"];

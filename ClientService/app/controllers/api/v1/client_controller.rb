@@ -1,18 +1,15 @@
 class Api::V1::ClientController < ApplicationController
   before_action :set_cliente, only: [:show, :update, :destroy]
 
-  # GET /api/v1/client
   def index
     @client = Client.activos
     render json: @client, status: :ok
   end
 
-  # GET /api/v1/client/:id
   def show
     render json: @cliente, status: :ok
   end
 
-  # POST /api/v1/client
   def create
     @cliente = Client.new(cliente_params)
 
@@ -23,7 +20,6 @@ class Api::V1::ClientController < ApplicationController
     end
   end
 
-  # PATCH/PUT /api/v1/client/:id
   def update
     if @cliente.update(cliente_params)
       render json: @cliente, status: :ok
@@ -32,7 +28,6 @@ class Api::V1::ClientController < ApplicationController
     end
   end
 
-  # DELETE /api/v1/client/:id
   def destroy
     @cliente.destroy
     head :no_content

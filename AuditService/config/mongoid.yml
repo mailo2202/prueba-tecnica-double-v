@@ -41,6 +41,9 @@ production:
       hosts:
         - <%= ENV['MONGODB_HOST'] || 'localhost:27017' %>
       options:
+        username: <%= ENV['MONGODB_USERNAME'] || nil %>
+        password: <%= ENV['MONGODB_PASSWORD'] || nil %>
+        auth_source: admin
         connect_timeout: 10
         socket_timeout: 5
         server_selection_timeout: 5

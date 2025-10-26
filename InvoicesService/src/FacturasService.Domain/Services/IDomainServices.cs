@@ -1,23 +1,23 @@
-namespace FacturasService.Domain.Services;
+namespace InvoicesService.Domain.Services;
 
 /// <summary>
-/// Servicio de dominio para validaciones de facturas
+/// Domain service for invoice validations
 /// </summary>
 public interface IClientService
 {
     /// <summary>
-    /// Valida si un client existe en el sistema
+    /// Validates if a client exists in the system
     /// </summary>
-    Task<bool> ClientExisteAsync(int clientId);
+    Task<bool> ClientExistsAsync(int clientId);
 }
 
 /// <summary>
-/// Servicio de dominio para auditoría
+/// Domain service for auditing
 /// </summary>
 public interface IAuditService
 {
     /// <summary>
-    /// Registra un evento de auditoría
+    /// Registers an audit event
     /// </summary>
-    Task RegistrarEventoAsync(string evento, string entidad, int entidadId, string detalles);
+    Task RegisterEventAsync(string eventType, string entity, int entityId, string details);
 }

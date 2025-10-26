@@ -1,39 +1,39 @@
-using FacturasService.Domain.Entities;
+using InvoicesService.Domain.Entities;
 
-namespace FacturasService.Domain.Repositories;
+namespace InvoicesService.Domain.Repositories;
 
 /// <summary>
-/// Interfaz del repositorio para la entidad Factura
+/// Invoice repository interface
 /// </summary>
-public interface IFacturaRepository
+public interface IInvoiceRepository
 {
     /// <summary>
-    /// Obtiene una factura por su ID
+    /// Gets an invoice by its ID
     /// </summary>
-    Task<Factura?> ObtenerPorIdAsync(int id);
+    Task<Invoice?> GetByIdAsync(int id);
 
     /// <summary>
-    /// Obtiene todas las facturas en un rango de fechas
+    /// Gets all invoices within a date range
     /// </summary>
-    Task<IEnumerable<Factura>> ObtenerPorRangoFechasAsync(DateTime fechaInicio, DateTime fechaFin);
+    Task<IEnumerable<Invoice>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
 
     /// <summary>
-    /// Obtiene todas las facturas de un client
+    /// Gets all invoices for a specific client
     /// </summary>
-    Task<IEnumerable<Factura>> ObtenerPorClientAsync(int clientId);
+    Task<IEnumerable<Invoice>> GetByClientAsync(int clientId);
 
     /// <summary>
-    /// Crea una nueva factura
+    /// Creates a new invoice
     /// </summary>
-    Task<Factura> CrearAsync(Factura factura);
+    Task<Invoice> CreateAsync(Invoice invoice);
 
     /// <summary>
-    /// Actualiza una factura existente
+    /// Updates an existing invoice
     /// </summary>
-    Task<Factura> ActualizarAsync(Factura factura);
+    Task<Invoice> UpdateAsync(Invoice invoice);
 
     /// <summary>
-    /// Verifica si existe una factura con el ID especificado
+    /// Checks if an invoice exists with the specified ID
     /// </summary>
-    Task<bool> ExisteAsync(int id);
+    Task<bool> ExistsAsync(int id);
 }

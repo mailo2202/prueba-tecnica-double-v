@@ -1,112 +1,112 @@
 using MediatR;
-using FacturasService.Domain.Entities;
-using FacturasService.Domain.Repositories;
-using FacturasService.Domain.Services;
+using InvoicesService.Domain.Entities;
+using InvoicesService.Domain.Repositories;
+using InvoicesService.Domain.Services;
 
-namespace FacturasService.Application.Commands;
+namespace InvoicesService.Application.Commands;
 
 /// <summary>
-/// Comando para crear una nueva factura
+/// Command to create a new invoice
 /// </summary>
-public class CrearFacturaCommand : IRequest<CrearFacturaResponse>
+public class CreateInvoiceCommand : IRequest<CreateInvoiceResponse>
 {
     public int ClientId { get; set; }
-    public decimal Monto { get; set; }
-    public DateTime FechaEmision { get; set; }
-    public string Descripcion { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public DateTime IssueDate { get; set; }
+    public string Description { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// Respuesta del comando crear factura
+/// Response to the create invoice command
 /// </summary>
-public class CrearFacturaResponse
+public class CreateInvoiceResponse
 {
     public int Id { get; set; }
-    public string NumeroFactura { get; set; } = string.Empty;
-    public bool Exitoso { get; set; }
-    public string Mensaje { get; set; } = string.Empty;
+    public string InvoiceNumber { get; set; } = string.Empty;
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// Handler para el comando crear factura
+/// Handler for the create invoice command
 /// </summary>
-public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, CrearFacturaResponse>
+public class CreateInvoiceCommandHandler : IRequestHandler<CreateInvoiceCommand, CreateInvoiceResponse>
 {
-    private readonly IFacturaRepository _facturaRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
     private readonly IClientService _clientService;
     private readonly IAuditService _auditService;
 
-    public CrearFacturaCommandHandler(
-        IFacturaRepository facturaRepository,
+    public CreateInvoiceCommandHandler(
+        IInvoiceRepository invoiceRepository,
         IClientService clientService,
         IAuditService auditService)
     {
-        _facturaRepository = facturaRepository;
+        _invoiceRepository = invoiceRepository;
         _clientService = clientService;
         _auditService = auditService;
     }
 
-    public async Task<CrearFacturaResponse> Handle(CrearFacturaCommand request, CancellationToken cancellationToken)
+    public async Task<CreateInvoiceResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // Validar que el cliente existe
-            var clientExiste = await _clientService.ClientExisteAsync(request.ClientId);
-            if (!clientExiste)
+            // Validate that the client exists
+            var clientExists = await _clientService.ClientExistsAsync(request.ClientId);
+            if (!clientExists)
             {
-                await _auditService.RegistrarEventoAsync(
+                await _auditService.RegisterEventAsync(
                     "ERROR", 
-                    "Factura", 
+                    "Invoice", 
                     request.ClientId, 
-                    $"Client con ID {request.ClientId} no existe"
+                    $"Client with ID {request.ClientId} does not exist"
                 );
                 
-                return new CrearFacturaResponse
+                return new CreateInvoiceResponse
                 {
-                    Exitoso = false,
-                    Mensaje = "El client especificado no existe"
+                    Success = false,
+                    Message = "The specified client does not exist"
                 };
             }
 
-            // Crear la factura
-            var factura = new Factura(
+            // Create the invoice
+            var invoice = new Invoice(
                 request.ClientId,
-                request.Monto,
-                request.FechaEmision,
-                request.Descripcion
+                request.Amount,
+                request.IssueDate,
+                request.Description
             );
 
-            var facturaCreada = await _facturaRepository.CrearAsync(factura);
+            var createdInvoice = await _invoiceRepository.CreateAsync(invoice);
 
-            // Registrar evento de auditoría
-            await _auditService.RegistrarEventoAsync(
-                "CREAR",
-                "Factura",
-                facturaCreada.Id,
-                $"Factura creada: {facturaCreada.NumeroFactura}, Monto: {facturaCreada.Monto:C}"
+            // Register audit event
+            await _auditService.RegisterEventAsync(
+                "CREATE",
+                "Invoice",
+                createdInvoice.Id,
+                $"Invoice created: {createdInvoice.InvoiceNumber}, Amount: {createdInvoice.Amount:C}"
             );
 
-            return new CrearFacturaResponse
+            return new CreateInvoiceResponse
             {
-                Id = facturaCreada.Id,
-                NumeroFactura = facturaCreada.NumeroFactura,
-                Exitoso = true,
-                Mensaje = "Factura creada exitosamente"
+                Id = createdInvoice.Id,
+                InvoiceNumber = createdInvoice.InvoiceNumber,
+                Success = true,
+                Message = "Invoice created successfully"
             };
         }
         catch (Exception ex)
         {
-            await _auditService.RegistrarEventoAsync(
+            await _auditService.RegisterEventAsync(
                 "ERROR",
-                "Factura",
+                "Invoice",
                 request.ClientId,
-                $"Error al crear factura: {ex.Message}"
+                $"Error creating invoice: {ex.Message}"
             );
 
-            return new CrearFacturaResponse
+            return new CreateInvoiceResponse
             {
-                Exitoso = false,
-                Mensaje = $"Error interno: {ex.Message}"
+                Success = false,
+                Message = $"Internal error: {ex.Message}"
             };
         }
     }

@@ -1,12 +1,12 @@
 using MediatR;
 using FluentValidation;
-using FacturasService.Application.Commands;
-using FacturasService.Application.Validators;
+using InvoicesService.Application.Commands;
+using InvoicesService.Application.Validators;
 
-namespace FacturasService.WebAPI;
+namespace InvoicesService.WebAPI;
 
 /// <summary>
-/// Configuración de servicios de la aplicación
+/// Application services configuration
 /// </summary>
 public static class DependencyInjection
 {
@@ -15,11 +15,11 @@ public static class DependencyInjection
         // MediatR
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(typeof(CrearFacturaCommand).Assembly);
+            cfg.RegisterServicesFromAssembly(typeof(CreateInvoiceCommand).Assembly);
         });
 
         // FluentValidation
-        services.AddValidatorsFromAssembly(typeof(CrearFacturaCommandValidator).Assembly);
+        services.AddValidatorsFromAssembly(typeof(CreateInvoiceCommandValidator).Assembly);
 
         return services;
     }

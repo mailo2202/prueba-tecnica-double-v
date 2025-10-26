@@ -51,6 +51,7 @@ services:
     container_name: facturacion-client-service
     environment:
       - RAILS_ENV=production
+      - SECRET_KEY_BASE=4a8f9c2e1b7d5a3f6c9e8b1d4a7c0e3f6b9d2a5c8e1b4d7a0c3e6f9b2d5a8c
       - ORACLE_HOST=oracle
       - ORACLE_PORT=1521
       - ORACLE_DATABASE=XE
@@ -76,8 +77,11 @@ services:
     container_name: facturacion-audit-service
     environment:
       - RAILS_ENV=production
+      - SECRET_KEY_BASE=7b3e6f9c2d5a8e1b4c7d0a3f6c9e2b5d8a1c4e7b0d3f6a9c2e5b8d1a4c7e0b
       - MONGODB_HOST=mongodb:27017
-      - MONGODB_DATABASE=audit_db
+      - MONGODB_DATABASE=auditoria_db
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=admin123
     ports:
       - "3002:3002"
     depends_on:

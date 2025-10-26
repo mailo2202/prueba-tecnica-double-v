@@ -66,6 +66,13 @@ Este proyecto implementa un sistema de microservicios para la facturación elect
 
 ## Requisitos del Sistema
 
+- **Docker** 20.10+
+- **Docker Compose** 2.0+
+- **Ruby** 3.4.7 (para servicios Rails)
+- **.NET 8.0 SDK** (para servicio de facturas)
+- **Oracle Database XE 21c** (se descarga automáticamente con Docker)
+- **MongoDB 7.0** (se descarga automáticamente con Docker)
+
 ## Instalación y Ejecución
 
 ### Opción 1: Docker Compose (Recomendado)
@@ -75,6 +82,9 @@ Este proyecto implementa un sistema de microservicios para la facturación elect
 git clone git@github.com:mailo2202/prueba-tecnica-double-v.git
 cd prueba-tecnica-double-v
 
+# Reconstruir las imágenes (primera vez o después de cambios)
+docker-compose build --no-cache client-service audit-service
+
 # Levantar todos los servicios
 docker-compose up -d
 
@@ -83,6 +93,10 @@ docker-compose ps
 
 # Ver logs en tiempo real
 docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f client-service
+docker-compose logs -f audit-service
 ```
 
 ### Opción 2: Ejecución Manual
@@ -94,17 +108,23 @@ dotnet restore
 dotnet run --project src/FacturasService.WebAPI
 ```
 
-#### Servicio de Client (Ruby)
+#### Servicio de Client (Ruby on Rails)
 ```bash
 cd ClientService
 bundle install
+# Configurar SECRET_KEY_BASE
+export SECRET_KEY_BASE=$(bundle exec rails secret)
 rails server -p 3001
 ```
 
-#### Servicio de Auditoría (Ruby)
+#### Servicio de Auditoría (Ruby on Rails)
 ```bash
-cd AuditoriaService
+cd AuditService
 bundle install
+# Configurar SECRET_KEY_BASE y MongoDB
+export SECRET_KEY_BASE=$(bundle exec rails secret)
+export MONGODB_HOST=localhost:27017
+export MONGODB_DATABASE=auditoria_db
 rails server -p 3002
 ```
 
@@ -302,29 +322,97 @@ bundle exec rspec
 ## Despliegue en Producción
 
 ### Variables de Entorno
+
+#### Servicio de Client (Ruby on Rails)
 ```bash
-# Oracle Database
-ORACLE_HOST=oracle-server
+RAILS_ENV=production
+SECRET_KEY_BASE=<clave_secreta_generada>  # Requerido
+ORACLE_HOST=oracle
 ORACLE_PORT=1521
 ORACLE_DATABASE=XE
-ORACLE_USERNAME=facturas_user
-ORACLE_PASSWORD=secure_password
+ORACLE_USERNAME=client_user
+ORACLE_PASSWORD=client_pass
+AUDIT_SERVICE_URL=http://audit-service:3002
+```
 
-# MongoDB
-MONGODB_HOST=mongodb-server
+#### Servicio de Auditoría (Ruby on Rails)
+```bash
+RAILS_ENV=production
+SECRET_KEY_BASE=<clave_secreta_generada>  # Requerido
+MONGODB_HOST=mongodb:27017
 MONGODB_DATABASE=auditoria_db
+MONGODB_USERNAME=admin
+MONGODB_PASSWORD=admin123
+```
 
-# Servicios
-CLIENTES_SERVICE_URL=http://client-service:3001
-AUDITORIA_SERVICE_URL=http://auditoria-service:3002
+#### Servicio de Facturas (.NET Core)
+```bash
+ASPNETCORE_ENVIRONMENT=Production
+ConnectionStrings__OracleConnection=Data Source=oracle:1521/XE;User Id=facturas_user;Password=facturas_pass;
+Services__ClientService=http://client-service:3001
+Services__AuditService=http://audit-service:3002
+```
+
+#### Generar SECRET_KEY_BASE
+```bash
+# Para servicio Client
+docker-compose run --rm client-service rails secret
+
+# Para servicio Audit
+docker-compose run --rm audit-service rails secret
 ```
 
 ### Configuración de Producción
+
+#### Requisitos Previos
+1. **Docker y Docker Compose** instalados
+2. **Ruby 3.4.7** (para servicios Rails)
+3. **.NET 8.0 SDK** (para servicio de facturas)
+4. **Archivos necesarios**:
+   - `Gemfile` y `Gemfile.lock` en cada servicio Rails
+   - Archivos `bin/rails` y `bin/bundle` en cada servicio Rails
+   - `config.ru` y `Rakefile` en cada servicio Rails
+5. **Archivo `.gitattributes`** en la raíz del proyecto
+
+#### Archivos de Configuración Rails
+Los servicios de Rails requieren los siguientes archivos en sus respectivos directorios:
+```
+ClientService/
+  ├── bin/
+  │   ├── rails
+  │   └── bundle
+  ├── config/
+  │   ├── application.rb
+  │   ├── boot.rb
+  │   ├── environment.rb
+  │   └── mongoid.yml (para AuditService)
+  ├── Gemfile
+  ├── Gemfile.lock
+  ├── config.ru
+  └── Rakefile
+
+AuditService/
+  ├── bin/
+  │   ├── rails
+  │   └── bundle
+  ├── config/
+  │   ├── application.rb
+  │   ├── boot.rb
+  │   ├── environment.rb
+  │   └── mongoid.yml
+  ├── Gemfile
+  ├── Gemfile.lock
+  ├── config.ru
+  └── Rakefile
+```
+
+#### Configuración
 - SSL/TLS habilitado
 - Logs centralizados
 - Monitoreo con Prometheus/Grafana
 - Backup automático de bases de datos
 - Health checks con alertas
+- **IMPORTANTE**: Generar nuevas `SECRET_KEY_BASE` para producción
 
 ## Contribución
 
@@ -347,6 +435,31 @@ AUDITORIA_SERVICE_URL=http://auditoria-service:3002
 - Pruebas de carga para endpoints críticos
 - Validación de seguridad
 
+## Cambios Recientes
+
+### Versión 1.1.0 (Octubre 2025)
+
+#### Correcciones en Servicios Rails
+- ✅ Actualizada versión de Ruby a 3.4.7 en ambos servicios
+- ✅ Corregido problema de terminaciones de línea (CRLF → LF) en archivos `bin/`
+- ✅ Agregado soporte para `SECRET_KEY_BASE` en ambos servicios
+- ✅ Configurada autenticación de MongoDB para AuditService
+- ✅ Creados archivos faltantes: `bin/rails`, `bin/bundle`, `config.ru`, `Rakefile`
+- ✅ Normalizado Dockerfiles para usar Ruby 3.4.7-slim en ambos servicios
+- ✅ Agregado archivo `.gitattributes` para normalizar terminaciones de línea
+
+#### Variables de Entorno Requeridas
+- `SECRET_KEY_BASE`: **Requerido** para servicios Rails en producción
+- `MONGODB_USERNAME` y `MONGODB_PASSWORD`: Agregadas para autenticación MongoDB
+
+#### Archivos Modificados
+- `ClientService/Dockerfile`: Actualizado a Ruby 3.4.7-slim
+- `AuditService/Dockerfile`: Normalizado a Ruby 3.4.7-slim
+- `ClientService/Gemfile`: Actualizado a Ruby 3.4.7
+- `AuditService/config/mongoid.yml`: Agregada configuración de autenticación
+- `docker-compose.yml`: Agregadas variables `SECRET_KEY_BASE` y credenciales MongoDB
+- `.gitattributes`: Nuevo archivo para normalizar terminaciones de línea
+
 ## Troubleshooting
 
 ### Problemas Comunes
@@ -365,11 +478,34 @@ docker-compose restart servicio-name
 
 #### Error de conexión a base de datos
 ```bash
-# Verificar conectividad
+# Verificar conectividad Oracle
 docker-compose exec oracle sqlplus sys/OraclePass123@//localhost:1521/XE as sysdba
 
+# Verificar conectividad MongoDB
+docker-compose exec mongodb mongosh --eval "db.adminCommand('ping')"
+
 # Verificar configuración
-docker-compose exec servicio-name env | grep -i oracle
+docker-compose exec client-service env | grep -i oracle
+docker-compose exec audit-service env | grep -i mongodb
+```
+
+#### Servicios Rails no inician
+```bash
+# Verificar archivos binarios
+docker-compose run --rm client-service ls -la bin/
+
+# Verificar errores de Rails
+docker-compose logs client-service | tail -50
+docker-compose logs audit-service | tail -50
+
+# Verificar SECRET_KEY_BASE
+docker-compose exec client-service env | grep SECRET_KEY_BASE
+docker-compose exec audit-service env | grep SECRET_KEY_BASE
+
+# Reconstruir imágenes si hay problemas
+docker-compose down
+docker-compose build --no-cache client-service audit-service
+docker-compose up -d
 ```
 
 #### Problemas de memoria

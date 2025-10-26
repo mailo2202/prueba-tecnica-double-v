@@ -1,121 +1,121 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using FacturasService.Application.Commands;
-using FacturasService.Application.Queries;
+using InvoicesService.Application.Commands;
+using InvoicesService.Application.Queries;
 
-namespace FacturasService.WebAPI.Controllers;
+namespace InvoicesService.WebAPI.Controllers;
 
 /// <summary>
-/// Controlador para la gestión de facturas
+/// Controller for invoice management
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class FacturasController : ControllerBase
+public class InvoicesController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<FacturasController> _logger;
+    private readonly ILogger<InvoicesController> _logger;
 
-    public FacturasController(IMediator mediator, ILogger<FacturasController> logger)
+    public InvoicesController(IMediator mediator, ILogger<InvoicesController> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
     /// <summary>
-    /// Crea una nueva factura
+    /// Creates a new invoice
     /// </summary>
-    /// <param name="request">Datos de la factura a crear</param>
-    /// <returns>Información de la factura creada</returns>
+    /// <param name="request">Invoice data to create</param>
+    /// <returns>Created invoice information</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(CrearFacturaResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(CrearFacturaResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CreateInvoiceResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CreateInvoiceResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CrearFactura([FromBody] CrearFacturaCommand request)
+    public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceCommand request)
     {
         try
         {
-            _logger.LogInformation("Creando factura para client {ClientId}", request.ClientId);
+            _logger.LogInformation("Creating invoice for client {ClientId}", request.ClientId);
 
             var response = await _mediator.Send(request);
 
-            if (response.Exitoso)
+            if (response.Success)
             {
-                return CreatedAtAction(nameof(ObtenerFactura), new { id = response.Id }, response);
+                return CreatedAtAction(nameof(GetInvoice), new { id = response.Id }, response);
             }
 
             return BadRequest(response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al crear factura");
-            return StatusCode(500, new CrearFacturaResponse
+            _logger.LogError(ex, "Error creating invoice");
+            return StatusCode(500, new CreateInvoiceResponse
             {
-                Exitoso = false,
-                Mensaje = "Error interno del servidor"
+                Success = false,
+                Message = "Internal server error"
             });
         }
     }
 
     /// <summary>
-    /// Obtiene una factura por su ID
+    /// Gets an invoice by its ID
     /// </summary>
-    /// <param name="id">ID de la factura</param>
-    /// <returns>Información de la factura</returns>
+    /// <param name="id">Invoice ID</param>
+    /// <returns>Invoice information</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ObtenerFacturaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetInvoiceResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ObtenerFactura(int id)
+    public async Task<IActionResult> GetInvoice(int id)
     {
         try
         {
-            _logger.LogInformation("Obteniendo factura con ID {Id}", id);
+            _logger.LogInformation("Getting invoice with ID {Id}", id);
 
-            var query = new ObtenerFacturaPorIdQuery { Id = id };
+            var query = new GetInvoiceByIdQuery { Id = id };
             var response = await _mediator.Send(query);
 
             if (response == null)
             {
-                return NotFound($"Factura con ID {id} no encontrada");
+                return NotFound($"Invoice with ID {id} not found");
             }
 
             return Ok(response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener factura con ID {Id}", id);
-            return StatusCode(500, "Error interno del servidor");
+            _logger.LogError(ex, "Error getting invoice with ID {Id}", id);
+            return StatusCode(500, "Internal server error");
         }
     }
 
     /// <summary>
-    /// Obtiene facturas por rango de fechas
+    /// Gets invoices by date range
     /// </summary>
-    /// <param name="fechaInicio">Fecha de inicio del rango</param>
-    /// <param name="fechaFin">Fecha de fin del rango</param>
-    /// <returns>Lista de facturas en el rango especificado</returns>
+    /// <param name="startDate">Range start date</param>
+    /// <param name="endDate">Range end date</param>
+    /// <returns>List of invoices in the specified range</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ObtenerFacturaResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<GetInvoiceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ObtenerFacturasPorRango(
-        [FromQuery] DateTime fechaInicio,
-        [FromQuery] DateTime fechaFin)
+    public async Task<IActionResult> GetInvoicesByDateRange(
+        [FromQuery] DateTime startDate,
+        [FromQuery] DateTime endDate)
     {
         try
         {
-            if (fechaInicio > fechaFin)
+            if (startDate > endDate)
             {
-                return BadRequest("La fecha de inicio no puede ser mayor a la fecha de fin");
+                return BadRequest("Start date cannot be greater than end date");
             }
 
-            _logger.LogInformation("Obteniendo facturas desde {FechaInicio} hasta {FechaFin}", 
-                fechaInicio, fechaFin);
+            _logger.LogInformation("Getting invoices from {StartDate} to {EndDate}", 
+                startDate, endDate);
 
-            var query = new ObtenerFacturasPorRangoQuery
+            var query = new GetInvoicesByDateRangeQuery
             {
-                FechaInicio = fechaInicio,
-                FechaFin = fechaFin
+                StartDate = startDate,
+                EndDate = endDate
             };
 
             var response = await _mediator.Send(query);
@@ -123,8 +123,8 @@ public class FacturasController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener facturas por rango");
-            return StatusCode(500, "Error interno del servidor");
+            _logger.LogError(ex, "Error getting invoices by date range");
+            return StatusCode(500, "Internal server error");
         }
     }
 }

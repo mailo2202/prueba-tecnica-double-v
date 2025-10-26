@@ -1,5 +1,5 @@
-using FacturasService.Infrastructure;
-using FacturasService.WebAPI;
+using InvoicesService.Infrastructure;
+using InvoicesService.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +9,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { 
-        Title = "FacturasService API", 
+        Title = "InvoicesService API", 
         Version = "v1",
-        Description = "API para la gestión de facturas electrónicas"
+        Description = "API for electronic invoice management"
     });
 });
 
-// Configuración de CORS
+// CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -26,17 +26,17 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configuración de logging
+// Logging configuration
 builder.Services.AddLogging(logging =>
 {
     logging.AddConsole();
     logging.AddDebug();
 });
 
-// Registro de servicios de aplicación
+// Application services registration
 builder.Services.AddApplicationServices();
 
-// Registro de servicios de infraestructura
+// Infrastructure services registration
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "FacturasService API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvoicesService API v1");
     });
 }
 
@@ -56,7 +56,7 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 
-// Configuración de logging de requests
+// Request logging configuration
 app.Use(async (context, next) =>
 {
     var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();

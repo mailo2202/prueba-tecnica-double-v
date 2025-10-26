@@ -1,22 +1,21 @@
-# Use Ruby 3.2 as base image
-FROM ruby:3.2-slim
+# Use Ruby 3.4.7 as base image (same as AuditService)
+FROM ruby:3.4.7-slim
 
 # Install system dependencies
 RUN apt-get update -qq && apt-get install -y \
     build-essential \
+    libpq-dev \
     curl \
     git \
     libyaml-dev \
     pkg-config \
-    wget \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy Gemfile and Gemfile.lock
-COPY Gemfile Gemfile.lock ./
+# Copy Gemfile and Gemfile.lock if it exists
+COPY Gemfile* ./
 
 # Install gems
 RUN bundle install
@@ -38,11 +37,11 @@ ENV RAILS_LOG_TO_STDOUT=true
 # Make bin files executable
 RUN chmod +x bin/rails bin/bundle
 
-# Run database migrations (MongoDB)
-RUN bundle exec rails db:create db:migrate RAILS_ENV=production
+# Fix line endings (convert Windows line endings to Unix)
+RUN sed -i 's/\r$//' bin/rails bin/bundle || true
 
-# Precompile assets (if any)
-RUN bundle exec rails assets:precompile
+# Precompile assets (if any) - se omite temporalmente para debug
+# RUN bundle exec rails assets:precompile
 
 # Start the application
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3001"]
+CMD ["sh", "-c", "rm -f tmp/pids/server.pid && exec bundle exec rails server -b 0.0.0.0 -p 3001"]

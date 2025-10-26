@@ -1,75 +1,75 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FacturasService.Domain.Entities;
+namespace InvoicesService.Domain.Entities;
 
 /// <summary>
-/// Entidad de dominio que representa una Factura
+/// Domain entity representing an Invoice
 /// </summary>
-public class Factura
+public class Invoice
 {
     public int Id { get; private set; }
     public int ClientId { get; private set; }
-    public decimal Monto { get; private set; }
-    public DateTime FechaEmision { get; private set; }
-    public string Descripcion { get; private set; } = string.Empty;
-    public string NumeroFactura { get; private set; } = string.Empty;
-    public DateTime FechaCreacion { get; private set; }
-    public DateTime? FechaActualizacion { get; private set; }
+    public decimal Amount { get; private set; }
+    public DateTime IssueDate { get; private set; }
+    public string Description { get; private set; } = string.Empty;
+    public string InvoiceNumber { get; private set; } = string.Empty;
+    public DateTime CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
-    // Constructor privado para EF Core
-    private Factura() { }
+    // Private constructor for EF Core
+    private Invoice() { }
 
-    // Constructor público para crear nuevas facturas
-    public Factura(int clientId, decimal monto, DateTime fechaEmision, string descripcion)
+    // Public constructor to create new invoices
+    public Invoice(int clientId, decimal amount, DateTime issueDate, string description)
     {
         ClientId = clientId;
-        Monto = monto;
-        FechaEmision = fechaEmision;
-        Descripcion = descripcion;
-        FechaCreacion = DateTime.UtcNow;
-        NumeroFactura = GenerarNumeroFactura();
+        Amount = amount;
+        IssueDate = issueDate;
+        Description = description;
+        CreatedAt = DateTime.UtcNow;
+        InvoiceNumber = GenerateInvoiceNumber();
         
-        Validar();
+        Validate();
     }
 
     /// <summary>
-    /// Actualiza los datos de la factura
+    /// Updates the invoice data
     /// </summary>
-    public void Actualizar(decimal monto, DateTime fechaEmision, string descripcion)
+    public void Update(decimal amount, DateTime issueDate, string description)
     {
-        Monto = monto;
-        FechaEmision = fechaEmision;
-        Descripcion = descripcion;
-        FechaActualizacion = DateTime.UtcNow;
+        Amount = amount;
+        IssueDate = issueDate;
+        Description = description;
+        UpdatedAt = DateTime.UtcNow;
         
-        Validar();
+        Validate();
     }
 
     /// <summary>
-    /// Valida las reglas de negocio de la factura
+    /// Validates the invoice business rules
     /// </summary>
-    private void Validar()
+    private void Validate()
     {
         if (ClientId <= 0)
-            throw new ArgumentException("El ID del client debe ser mayor a 0", nameof(ClientId));
+            throw new ArgumentException("Client ID must be greater than 0", nameof(ClientId));
 
-        if (Monto <= 0)
-            throw new ArgumentException("El monto debe ser mayor a 0", nameof(Monto));
+        if (Amount <= 0)
+            throw new ArgumentException("Amount must be greater than 0", nameof(Amount));
 
-        if (string.IsNullOrWhiteSpace(Descripcion))
-            throw new ArgumentException("La descripción es requerida", nameof(Descripcion));
+        if (string.IsNullOrWhiteSpace(Description))
+            throw new ArgumentException("Description is required", nameof(Description));
 
-        if (FechaEmision > DateTime.UtcNow.AddDays(1))
-            throw new ArgumentException("La fecha de emisión no puede ser futura", nameof(FechaEmision));
+        if (IssueDate > DateTime.UtcNow.AddDays(1))
+            throw new ArgumentException("Issue date cannot be in the future", nameof(IssueDate));
     }
 
     /// <summary>
-    /// Genera un número de factura único
+    /// Generates a unique invoice number
     /// </summary>
-    private string GenerarNumeroFactura()
+    private string GenerateInvoiceNumber()
     {
         var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
         var random = new Random().Next(1000, 9999);
-        return $"FAC-{timestamp}-{random}";
+        return $"INV-{timestamp}-{random}";
     }
 }

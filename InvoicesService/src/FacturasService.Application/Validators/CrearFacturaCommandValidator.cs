@@ -1,30 +1,30 @@
 using FluentValidation;
 
-namespace FacturasService.Application.Validators;
+namespace InvoicesService.Application.Validators;
 
 /// <summary>
-/// Validador para el comando crear factura
+/// Validator for the create invoice command
 /// </summary>
-public class CrearFacturaCommandValidator : AbstractValidator<Commands.CrearFacturaCommand>
+public class CreateInvoiceCommandValidator : AbstractValidator<Commands.CreateInvoiceCommand>
 {
-    public CrearFacturaCommandValidator()
+    public CreateInvoiceCommandValidator()
     {
         RuleFor(x => x.ClientId)
             .GreaterThan(0)
-            .WithMessage("El ID del client debe ser mayor a 0");
+            .WithMessage("Client ID must be greater than 0");
 
-        RuleFor(x => x.Monto)
+        RuleFor(x => x.Amount)
             .GreaterThan(0)
-            .WithMessage("El monto debe ser mayor a 0");
+            .WithMessage("Amount must be greater than 0");
 
-        RuleFor(x => x.Descripcion)
+        RuleFor(x => x.Description)
             .NotEmpty()
-            .WithMessage("La descripción es requerida")
+            .WithMessage("Description is required")
             .MaximumLength(500)
-            .WithMessage("La descripción no puede exceder 500 caracteres");
+            .WithMessage("Description cannot exceed 500 characters");
 
-        RuleFor(x => x.FechaEmision)
+        RuleFor(x => x.IssueDate)
             .LessThanOrEqualTo(DateTime.UtcNow.AddDays(1))
-            .WithMessage("La fecha de emisión no puede ser futura");
+            .WithMessage("Issue date cannot be in the future");
     }
 }

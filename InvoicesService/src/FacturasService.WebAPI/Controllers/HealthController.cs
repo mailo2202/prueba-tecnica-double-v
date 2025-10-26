@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using FacturasService.Application.Commands;
-using FluentValidation;
 
-namespace FacturasService.WebAPI.Controllers;
+namespace InvoicesService.WebAPI.Controllers;
 
 /// <summary>
-/// Controlador para operaciones de salud del servicio
+/// Controller for service health operations
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -20,9 +17,9 @@ public class HealthController : ControllerBase
     }
 
     /// <summary>
-    /// Verifica el estado del servicio
+    /// Verifies the service status
     /// </summary>
-    /// <returns>Estado del servicio</returns>
+    /// <returns>Service status</returns>
     [HttpGet]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public IActionResult Get()
@@ -30,7 +27,7 @@ public class HealthController : ControllerBase
         return Ok(new
         {
             Status = "Healthy",
-            Service = "FacturasService",
+            Service = "InvoicesService",
             Timestamp = DateTime.UtcNow,
             Version = "1.0.0"
         });

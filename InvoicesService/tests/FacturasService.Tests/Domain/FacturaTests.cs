@@ -1,133 +1,133 @@
-using FacturasService.Domain.Entities;
+using InvoicesService.Domain.Entities;
 using FluentAssertions;
 using Xunit;
 
-namespace FacturasService.Tests.Domain;
+namespace InvoicesService.Tests.Domain;
 
 /// <summary>
-/// Pruebas unitarias para la entidad Factura
+/// Unit tests for the Invoice entity
 /// </summary>
-public class FacturaTests
+public class InvoiceTests
 {
     [Fact]
-    public void CrearFactura_ConDatosValidos_DebeCrearFacturaCorrectamente()
+    public void CreateInvoice_WithValidData_ShouldCreateInvoiceCorrectly()
     {
         // Arrange
         var clientId = 1;
-        var monto = 150000.50m;
-        var fechaEmision = DateTime.UtcNow;
-        var descripcion = "Servicios de consultoría";
+        var amount = 150000.50m;
+        var issueDate = DateTime.UtcNow;
+        var description = "Consulting services";
 
         // Act
-        var factura = new Factura(clientId, monto, fechaEmision, descripcion);
+        var invoice = new Invoice(clientId, amount, issueDate, description);
 
         // Assert
-        factura.ClientId.Should().Be(clientId);
-        factura.Monto.Should().Be(monto);
-        factura.FechaEmision.Should().Be(fechaEmision);
-        factura.Descripcion.Should().Be(descripcion);
-        factura.NumeroFactura.Should().NotBeNullOrEmpty();
-        factura.NumeroFactura.Should().StartWith("FAC-");
-        factura.FechaCreacion.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        invoice.ClientId.Should().Be(clientId);
+        invoice.Amount.Should().Be(amount);
+        invoice.IssueDate.Should().Be(issueDate);
+        invoice.Description.Should().Be(description);
+        invoice.InvoiceNumber.Should().NotBeNullOrEmpty();
+        invoice.InvoiceNumber.Should().StartWith("INV-");
+        invoice.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void CrearFactura_ConClientIdInvalido_DebeLanzarExcepcion(int clientIdInvalido)
+    public void CreateInvoice_WithInvalidClientId_ShouldThrowException(int invalidClientId)
     {
         // Arrange
-        var monto = 150000.50m;
-        var fechaEmision = DateTime.UtcNow;
-        var descripcion = "Servicios de consultoría";
+        var amount = 150000.50m;
+        var issueDate = DateTime.UtcNow;
+        var description = "Consulting services";
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clientIdInvalido, monto, fechaEmision, descripcion));
+            new Invoice(invalidClientId, amount, issueDate, description));
         
-        exception.Message.Should().Contain("El ID del client debe ser mayor a 0");
+        exception.Message.Should().Contain("Client ID must be greater than 0");
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-100)]
-    public void CrearFactura_ConMontoInvalido_DebeLanzarExcepcion(decimal montoInvalido)
+    public void CreateInvoice_WithInvalidAmount_ShouldThrowException(decimal invalidAmount)
     {
         // Arrange
         var clientId = 1;
-        var fechaEmision = DateTime.UtcNow;
-        var descripcion = "Servicios de consultoría";
+        var issueDate = DateTime.UtcNow;
+        var description = "Consulting services";
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clientId, montoInvalido, fechaEmision, descripcion));
+            new Invoice(clientId, invalidAmount, issueDate, description));
         
-        exception.Message.Should().Contain("El monto debe ser mayor a 0");
+        exception.Message.Should().Contain("Amount must be greater than 0");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void CrearFactura_ConDescripcionInvalida_DebeLanzarExcepcion(string descripcionInvalida)
+    public void CreateInvoice_WithInvalidDescription_ShouldThrowException(string invalidDescription)
     {
         // Arrange
         var clientId = 1;
-        var monto = 150000.50m;
-        var fechaEmision = DateTime.UtcNow;
+        var amount = 150000.50m;
+        var issueDate = DateTime.UtcNow;
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clientId, monto, fechaEmision, descripcionInvalida));
+            new Invoice(clientId, amount, issueDate, invalidDescription));
         
-        exception.Message.Should().Contain("La descripción es requerida");
+        exception.Message.Should().Contain("Description is required");
     }
 
     [Fact]
-    public void CrearFactura_ConFechaEmisionFutura_DebeLanzarExcepcion()
+    public void CreateInvoice_WithFutureIssueDate_ShouldThrowException()
     {
         // Arrange
         var clientId = 1;
-        var monto = 150000.50m;
-        var fechaEmisionFutura = DateTime.UtcNow.AddDays(2);
-        var descripcion = "Servicios de consultoría";
+        var amount = 150000.50m;
+        var futureIssueDate = DateTime.UtcNow.AddDays(2);
+        var description = "Consulting services";
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            new Factura(clientId, monto, fechaEmisionFutura, descripcion));
+            new Invoice(clientId, amount, futureIssueDate, description));
         
-        exception.Message.Should().Contain("La fecha de emisión no puede ser futura");
+        exception.Message.Should().Contain("Issue date cannot be in the future");
     }
 
     [Fact]
-    public void ActualizarFactura_ConDatosValidos_DebeActualizarCorrectamente()
+    public void UpdateInvoice_WithValidData_ShouldUpdateCorrectly()
     {
         // Arrange
-        var factura = new Factura(1, 100000, DateTime.UtcNow, "Descripción inicial");
-        var nuevoMonto = 200000;
-        var nuevaFechaEmision = DateTime.UtcNow.AddDays(-1);
-        var nuevaDescripcion = "Descripción actualizada";
+        var invoice = new Invoice(1, 100000, DateTime.UtcNow, "Initial description");
+        var newAmount = 200000;
+        var newIssueDate = DateTime.UtcNow.AddDays(-1);
+        var newDescription = "Updated description";
 
         // Act
-        factura.Actualizar(nuevoMonto, nuevaFechaEmision, nuevaDescripcion);
+        invoice.Update(newAmount, newIssueDate, newDescription);
 
         // Assert
-        factura.Monto.Should().Be(nuevoMonto);
-        factura.FechaEmision.Should().Be(nuevaFechaEmision);
-        factura.Descripcion.Should().Be(nuevaDescripcion);
-        factura.FechaActualizacion.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        invoice.Amount.Should().Be(newAmount);
+        invoice.IssueDate.Should().Be(newIssueDate);
+        invoice.Description.Should().Be(newDescription);
+        invoice.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
     }
 
     [Fact]
-    public void GenerarNumeroFactura_DebeGenerarNumeroUnico()
+    public void GenerateInvoiceNumber_ShouldGenerateUniqueNumber()
     {
         // Arrange & Act
-        var factura1 = new Factura(1, 100000, DateTime.UtcNow, "Factura 1");
-        var factura2 = new Factura(2, 200000, DateTime.UtcNow, "Factura 2");
+        var invoice1 = new Invoice(1, 100000, DateTime.UtcNow, "Invoice 1");
+        var invoice2 = new Invoice(2, 200000, DateTime.UtcNow, "Invoice 2");
 
         // Assert
-        factura1.NumeroFactura.Should().NotBe(factura2.NumeroFactura);
-        factura1.NumeroFactura.Should().StartWith("FAC-");
-        factura2.NumeroFactura.Should().StartWith("FAC-");
+        invoice1.InvoiceNumber.Should().NotBe(invoice2.InvoiceNumber);
+        invoice1.InvoiceNumber.Should().StartWith("INV-");
+        invoice2.InvoiceNumber.Should().StartWith("INV-");
     }
 }

@@ -1,61 +1,61 @@
 using Microsoft.EntityFrameworkCore;
-using FacturasService.Domain.Entities;
-using FacturasService.Domain.Repositories;
-using FacturasService.Infrastructure.Data;
+using InvoicesService.Domain.Entities;
+using InvoicesService.Domain.Repositories;
+using InvoicesService.Infrastructure.Data;
 
-namespace FacturasService.Infrastructure.Repositories;
+namespace InvoicesService.Infrastructure.Repositories;
 
 /// <summary>
-/// Implementación del repositorio de facturas usando Entity Framework
+/// Invoice repository implementation using Entity Framework
 /// </summary>
-public class FacturaRepository : IFacturaRepository
+public class InvoiceRepository : IInvoiceRepository
 {
-    private readonly FacturasDbContext _context;
+    private readonly InvoicesDbContext _context;
 
-    public FacturaRepository(FacturasDbContext context)
+    public InvoiceRepository(InvoicesDbContext context)
     {
         _context = context;
     }
 
-    public async Task<Factura?> ObtenerPorIdAsync(int id)
+    public async Task<Invoice?> GetByIdAsync(int id)
     {
-        return await _context.Facturas
+        return await _context.Invoices
             .FirstOrDefaultAsync(f => f.Id == id);
     }
 
-    public async Task<IEnumerable<Factura>> ObtenerPorRangoFechasAsync(DateTime fechaInicio, DateTime fechaFin)
+    public async Task<IEnumerable<Invoice>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
     {
-        return await _context.Facturas
-            .Where(f => f.FechaEmision >= fechaInicio && f.FechaEmision <= fechaFin)
-            .OrderByDescending(f => f.FechaEmision)
+        return await _context.Invoices
+            .Where(f => f.IssueDate >= startDate && f.IssueDate <= endDate)
+            .OrderByDescending(f => f.IssueDate)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Factura>> ObtenerPorClientAsync(int clientId)
+    public async Task<IEnumerable<Invoice>> GetByClientAsync(int clientId)
     {
-        return await _context.Facturas
+        return await _context.Invoices
             .Where(f => f.ClientId == clientId)
-            .OrderByDescending(f => f.FechaEmision)
+            .OrderByDescending(f => f.IssueDate)
             .ToListAsync();
     }
 
-    public async Task<Factura> CrearAsync(Factura factura)
+    public async Task<Invoice> CreateAsync(Invoice invoice)
     {
-        _context.Facturas.Add(factura);
+        _context.Invoices.Add(invoice);
         await _context.SaveChangesAsync();
-        return factura;
+        return invoice;
     }
 
-    public async Task<Factura> ActualizarAsync(Factura factura)
+    public async Task<Invoice> UpdateAsync(Invoice invoice)
     {
-        _context.Facturas.Update(factura);
+        _context.Invoices.Update(invoice);
         await _context.SaveChangesAsync();
-        return factura;
+        return invoice;
     }
 
-    public async Task<bool> ExisteAsync(int id)
+    public async Task<bool> ExistsAsync(int id)
     {
-        return await _context.Facturas
+        return await _context.Invoices
             .AnyAsync(f => f.Id == id);
     }
 }

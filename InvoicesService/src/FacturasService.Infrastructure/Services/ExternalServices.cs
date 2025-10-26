@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
-using FacturasService.Domain.Services;
+using InvoicesService.Domain.Services;
 
-namespace FacturasService.Infrastructure.Services;
+namespace InvoicesService.Infrastructure.Services;
 
 /// <summary>
-/// Servicio para validar client mediante HTTP
+/// Service to validate client via HTTP
 /// </summary>
 public class ClientService : IClientService
 {
@@ -17,7 +17,7 @@ public class ClientService : IClientService
         _logger = logger;
     }
 
-    public async Task<bool> ClientExisteAsync(int clientId)
+    public async Task<bool> ClientExistsAsync(int clientId)
     {
         try
         {
@@ -26,14 +26,14 @@ public class ClientService : IClientService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al validar client con ID {ClientId}", clientId);
+            _logger.LogError(ex, "Error validating client with ID {ClientId}", clientId);
             return false;
         }
     }
 }
 
 /// <summary>
-/// Servicio para registrar eventos de auditoría
+/// Service to register audit events
 /// </summary>
 public class AuditService : IAuditService
 {
@@ -46,29 +46,29 @@ public class AuditService : IAuditService
         _logger = logger;
     }
 
-    public async Task RegistrarEventoAsync(string evento, string entidad, int entidadId, string detalles)
+    public async Task RegisterEventAsync(string eventType, string entity, int entityId, string details)
     {
         try
         {
-            var eventoAuditoria = new
+            var auditEvent = new
             {
-                event_type = evento,
-                entity = entidad,
-                entity_id = entidadId,
-                details = detalles,
+                event_type = eventType,
+                entity = entity,
+                entity_id = entityId,
+                details = details,
                 timestamp = DateTime.UtcNow,
-                service = "FacturasService"
+                service = "InvoicesService"
             };
 
-            var json = System.Text.Json.JsonSerializer.Serialize(eventoAuditoria);
+            var json = System.Text.Json.JsonSerializer.Serialize(auditEvent);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
             await _httpClient.PostAsync("api/v1/audit", content);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al registrar evento de auditoría: {Evento} - {Entidad} - {EntidadId}", 
-                evento, entidad, entidadId);
+            _logger.LogError(ex, "Error registering audit event: {EventType} - {Entity} - {EntityId}", 
+                eventType, entity, entityId);
         }
     }
 }
