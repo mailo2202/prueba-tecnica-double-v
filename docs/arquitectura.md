@@ -20,8 +20,8 @@ graph TB
     end
     
     subgraph "Bases de Datos"
-        ORACLE[(Oracle Database<br/>Transaccional)]
-        MONGO[(MongoDB<br/>Auditoría/Logs)]
+        ORACLE[(Oracle Database<br/>Facturas)]
+        MONGO[(MongoDB<br/>Clientes/Auditoría)]
     end
     
     subgraph "Infraestructura"
@@ -36,7 +36,7 @@ graph TB
     NGINX --> AS
     
     FS --> ORACLE
-    CS --> ORACLE
+    CS --> MONGO
     AS --> MONGO
     
     FS -.->|Eventos| AS
@@ -64,8 +64,8 @@ sequenceDiagram
     
     C->>F: POST /api/invoices
     F->>CS: GET /api/v1/client/{id}
-    CS->>O: SELECT client
-    O-->>CS: Client encontrado
+    CS->>M: Buscar client
+    M-->>CS: Client encontrado
     CS-->>F: Client válido
     F->>O: INSERT factura
     O-->>F: Factura creada
@@ -157,20 +157,20 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph "Datos Transaccionales"
-        CLIENT[Client]
+    subgraph "Oracle Database (Relacional)"
         FACTURAS[Facturas]
         ORACLE[(Oracle Database)]
     end
     
-    subgraph "Datos de Auditoría"
+    subgraph "MongoDB (NoSQL)"
+        CLIENT[Client]
         EVENTOS[Eventos de Auditoría]
         LOGS[Logs del Sistema]
         MONGO[(MongoDB)]
     end
     
-    CLIENT --> ORACLE
     FACTURAS --> ORACLE
+    CLIENT --> MONGO
     EVENTOS --> MONGO
     LOGS --> MONGO
     

@@ -21,8 +21,8 @@ Este proyecto implementa un sistema de microservicios para la facturación elect
 
 2. **Servicio de Client** (Ruby on Rails)
    - **Responsabilidad**: Gestión de información de client
-   - **Tecnología**: Ruby on Rails con MVC
-   - **Base de datos**: Oracle (transaccional)
+   - **Tecnología**: Ruby on Rails con Mongoid
+   - **Base de datos**: MongoDB (NoSQL)
    - **Puerto**: 3001
    - **Endpoints principales**:
      - `POST /api/v1/client` - Registrar client
@@ -229,18 +229,17 @@ curl http://localhost:3002/api/v1/audit
 ## Base de Datos
 
 ### Oracle (Transaccional)
-- **Tabla CLIENTES**: Información de clientes
 - **Tabla FACTURAS**: Información de facturas
 - **Índices**: Optimización de consultas frecuentes
 - **Triggers**: Actualización automática de timestamps
 - **Procedimientos**: Operaciones complejas
 
-### MongoDB (Auditoría)
+### MongoDB (NoSQL)
+- **Colección clients**: Información de clientes
 - **Colección evento_auditorias**: Eventos del sistema
 - **Colección auditoria_stats**: Estadísticas agregadas
 - **Colección system_config**: Configuración del sistema
 - **Índices**: Optimización de consultas por entidad, servicio, fecha
-- **Vistas**: Consultas predefinidas comunes
 ```
 ## Pruebas Unitarias
 
@@ -327,11 +326,10 @@ bundle exec rspec
 ```bash
 RAILS_ENV=production
 SECRET_KEY_BASE=<clave_secreta_generada>  # Requerido
-ORACLE_HOST=oracle
-ORACLE_PORT=1521
-ORACLE_DATABASE=XE
-ORACLE_USERNAME=client_user
-ORACLE_PASSWORD=client_pass
+MONGODB_HOST=mongodb:27017
+MONGODB_DATABASE=client_db
+MONGODB_USERNAME=admin
+MONGODB_PASSWORD=admin123
 AUDIT_SERVICE_URL=http://audit-service:3002
 ```
 
@@ -485,8 +483,9 @@ docker-compose exec oracle sqlplus sys/OraclePass123@//localhost:1521/XE as sysd
 docker-compose exec mongodb mongosh --eval "db.adminCommand('ping')"
 
 # Verificar configuración
-docker-compose exec client-service env | grep -i oracle
+docker-compose exec client-service env | grep -i mongodb
 docker-compose exec audit-service env | grep -i mongodb
+docker-compose exec invoices-service env | grep -i oracle
 ```
 
 #### Servicios Rails no inician
